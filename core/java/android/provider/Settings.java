@@ -8120,12 +8120,20 @@ public final class Settings {
          */
         public static final String UI_NIGHT_MODE = "ui_night_mode";
 
-	/**
-         * Whether user activated inverted UI mode or default UI mode. Owned
+        /**
+         * The current theme mode that has been selected by the user.  Owned
          * and controlled by UiModeManagerService.
          * @hide
          */
-        public static final String UI_INVERTED_MODE = "ui_inverted_mode";
+        public static final String UI_THEME_MODE = "ui_theme_mode";
+
+        /**
+         * Auto theme mode which switches either based on daytime or lightsensor
+         * values: 0 = manual (default), 1 = auto twilight (based on daytime)
+         * 2 = auto lightsensor (based on light conditions)
+         * @hide
+         */
+        public static final String UI_THEME_AUTO_MODE = "ui_theme_auto_mode";
 
         /**
          * Whether screensavers are enabled.
@@ -8301,6 +8309,11 @@ public final class Settings {
             MOUNT_UMS_PROMPT,
             MOUNT_UMS_NOTIFY_ENABLED,
             UI_NIGHT_MODE,
+<<<<<<< HEAD
+=======
+            UI_THEME_MODE,
+            UI_THEME_AUTO_MODE,
+>>>>>>> 8ef854a... TRDS 3.0 & new theme engine preparation [1/5]
             ADVANCED_REBOOT,
             PRIVACY_GUARD_DEFAULT,
 	    DEVELOPMENT_SHORTCUT,

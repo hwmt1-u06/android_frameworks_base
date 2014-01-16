@@ -236,6 +236,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     Display mDisplay;
     Point mCurrentDisplaySize = new Point();
     int mCurrOrientation;
+    int mCurrUiThemeMode;
     private float mHeadsUpVerticalOffset;
     private int[] mPilePosition = new int[2];
 
@@ -1155,6 +1156,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (currentTheme != null) {
             mCurrentTheme = (ThemeConfig)currentTheme.clone();
         }
+
+        mCurrUiThemeMode = mContext.getResources().getConfiguration().uiThemeMode;
+
 
         super.start(); // calls createAndAddWindows()
 
@@ -4686,6 +4690,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     void updateResources() {
         final Context context = mContext;
         final Resources res = context.getResources();
+
+        // detect theme ui mode change
+        int uiThemeMode = res.getConfiguration().uiThemeMode;
+        if (uiThemeMode != mCurrUiThemeMode) {
+            mCurrUiThemeMode = uiThemeMode;
+            return;
+        }
+
+        if (mClearButton instanceof TextView) {
+            ((TextView)mClearButton).setText(context.getText(R.string.status_bar_clear_all_button));
+        }
 
         // Update the QuickSettings container
         if (mQS != null) mQS.updateResources();
