@@ -63,6 +63,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_PROFILE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REMOTEDISPLAY;
+import static com.android.internal.util.beanstalk.QSConstants.TILE_THEME:  
 
 import android.app.Activity;
 import android.app.ActivityManagerNative;
@@ -130,8 +131,7 @@ import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
 import com.android.systemui.quicksettings.CPUFreqTile;
 import com.android.systemui.quicksettings.ProfileTile;
-
-
+import com.android.systemui.quicksettings.ThemeTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -308,6 +308,8 @@ public class QuickSettingsController {
 			    }				
             } else if (tile.equals(TILE_BATTERYSAVER)) {
                 qs = new BatterySaverTile(mContext, this);
+            } else if (tile.equals(TILE_THEME)) {
+                qs = new ThemeTile(mContext, this);				
             } else if (tile.equals(TILE_NETWORKADB)) {
                 mTileStatusUris.add(Settings.Global.getUriFor(Settings.Global.ADB_ENABLED));
                 if (DeviceUtils.adbEnabled(resolver)) {

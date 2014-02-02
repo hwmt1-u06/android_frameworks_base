@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+  <!-- UI theme mode -->
+  <java-symbol type="integer" name="config_uiThemeMode" />
+  <java-symbol type="string" name="theme_auto_switch_mode_error" />
+
+  <!-- Halo -->
+  <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindow" />
+  <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindowLight" />
+
+  <!-- Navigation ring power menu -->
+  <java-symbol type="drawable" name="ic_navigation_ring_power_menu" />
+  <!-- Last app on navring -->
+  <java-symbol type="drawable" name="ic_navigation_ring_lastapp" />
+
+  <!-- Screen recorder -->
+  <java-symbol type="string" name="global_action_screen_record" />
+  <java-symbol type="drawable" name="ic_lock_screen_record" />
+  
+  <!-- Hardware keys on/off option -->
+  <java-symbol type="bool" name="config_hwKeysPref" />
+
+  <!-- Slim recent app screen-->
+  <java-symbol type="integer" name="config_recentDefaultDur" />
+  <java-symbol type="integer" name="config_recentExitDur" />
+  <java-symbol type="style" name="Animation.RecentScreen" />
+  <java-symbol type="style" name="Animation.RecentScreen.Left" />
+  <java-symbol type="anim" name="recent_screen_enter" />
+  <java-symbol type="anim" name="recent_screen_enter_left" />
+  <java-symbol type="anim" name="recent_screen_fade_out" />
+
+  <!-- Navigation bar -->
+  <java-symbol type="string" name="global_actions_nav_bar_mode" />
+  <java-symbol type="string" name="global_actions_nav_bar_mode_on_status" />
+  <java-symbol type="string" name="global_actions_nav_bar_mode_off_status" />
+  <java-symbol type="drawable" name="ic_lock_navbar_on" />
+  <java-symbol type="drawable" name="ic_lock_navbar_off" />
+  <java-symbol type="string" name="disable_navigation_pie_error" />
+
+  <!-- Animation of toggle last app -->
+  <java-symbol type="anim" name="last_app_in" />
+  <java-symbol type="anim" name="last_app_out" />
+
+</resources>
