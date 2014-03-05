@@ -5693,8 +5693,18 @@ public final class Settings {
 	public static final String HOVER_MICRO_FADE_OUT_DELAY = "hover_micro_fade_out_delay";
 
         /**
+<<<<<<< HEAD
          * Hover: Exclude non-clearable notifications, default is 0 (off).
          *
+=======
+         *  Enable navigation bar double tap gesture on to put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";
+
+        /**
+         * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
+>>>>>>> 0bf64ee... Double tap to sleep on navigation bar [1/2]
          * @hide
          */
         public static final String HOVER_EXCLUDE_NON_CLEARABLE = "hover_exclude_non_clearable";
