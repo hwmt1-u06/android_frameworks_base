@@ -221,10 +221,17 @@ final class ProcessList {
             Slog.i("XXXXXX", "minfree_adj=" + minfree_adj + " minfree_abs=" + minfree_abs);
         }
 
+        // Overwrite calculated LMK parameters with the low-tier tested/validated values
+        boolean is_lowram = SystemProperties.getBoolean("ro.config.low_ram",false);
         for (int i=0; i<mOomAdj.length; i++) {
-            long low = mOomMinFreeLow[i];
-            long high = mOomMinFreeHigh[i];
-            mOomMinFree[i] = (long)(low + ((high-low)*scale));
+            if (is_lowram) {
+                mOomMinFree[i] = mOomMinFreeLowRam[i];
+            }
+            else {
+                long low = mOomMinFreeLow[i];
+                long high = mOomMinFreeHigh[i];
+                mOomMinFree[i] = (long)(low + ((high-low)*scale));
+            }
         }
 
         if (minfree_abs >= 0) {
