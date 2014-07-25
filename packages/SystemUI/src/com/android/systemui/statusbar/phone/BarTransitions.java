@@ -61,10 +61,19 @@ public class BarTransitions {
 
     private int mMode;
 
+<<<<<<< HEAD
     public BarTransitions(View view, BarBackgroundDrawable barBackground) {
         mTag = "BarTransitions." + view.getClass().getSimpleName();
         mView = view;
         mBarBackground = barBackground;
+=======
+    public BarTransitions(View view, int gradientResourceId, int opaqueColorResourceId,
+            int semiTransparentColorResourceId) {
+        mTag = "BarTransitions." + view.getClass().getSimpleName();
+        mView = view;
+        mBarBackground = new BarBackgroundDrawable(mView.getContext(), gradientResourceId,
+                opaqueColorResourceId, semiTransparentColorResourceId);
+>>>>>>> 9035415... SystemUI: Separate system bar BGs for themes
         if (HIGH_END) {
             mView.setBackground(mBarBackground);
         }
@@ -130,6 +139,7 @@ public class BarTransitions {
         // for subclasses
     }
 
+<<<<<<< HEAD
     protected static class BarBackgroundDrawable extends Drawable
             implements Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
         private final int mOpaqueColorResId;
@@ -149,6 +159,13 @@ public class BarTransitions {
         private int mOpaque = 0;
         private int mSemiTransparent = 0;
         private Drawable mGradient = null;
+=======
+    private static class BarBackgroundDrawable extends Drawable {
+        private final int mGradientResourceId;
+        private final int mOpaqueColorResourceId;
+        private final int mSemiTransparentColorResourceId;
+        private final TimeInterpolator mInterpolator;
+>>>>>>> 9035415... SystemUI: Separate system bar BGs for themes
 
         private int mCurrentMode = -1;
         private int mCurrentColor = 0;
@@ -164,6 +181,7 @@ public class BarTransitions {
             mSemiTransparentColorResId = semiTransparentColorResId;
             mGradientResId = gradientResId;
 
+<<<<<<< HEAD
             final Resources res = context.getResources();
             mDSBDuration = res.getInteger(R.integer.dsb_transition_duration);
             updateResources(res);
@@ -174,6 +192,17 @@ public class BarTransitions {
             final int currentColor = mCurrentColor;
             if (Color.alpha(currentColor) > 0) {
                 canvas.drawColor(currentColor);
+=======
+        public BarBackgroundDrawable(Context context, int gradientResourceId,
+                int opaqueColorResourceId, int semiTransparentColorResourceId) {
+            final Resources res = context.getResources();
+            if (DEBUG_COLORS) {
+                mOpaque = 0xff0000ff;
+                mSemiTransparent = 0x7f0000ff;
+            } else {
+                mOpaque = res.getColor(opaqueColorResourceId);
+                mSemiTransparent = res.getColor(semiTransparentColorResourceId);
+>>>>>>> 9035415... SystemUI: Separate system bar BGs for themes
             }
 
             final int currentGradientAlpha = mCurrentGradientAlpha;
@@ -185,6 +214,7 @@ public class BarTransitions {
 
         public void setGradientResourceId(Resources res, int gradientResourceId) {
             mGradient = res.getDrawable(gradientResourceId);
+<<<<<<< HEAD
             mGradientResId = gradientResourceId;
         }
 
@@ -196,6 +226,23 @@ public class BarTransitions {
         @Override
         public final void setAlpha(final int alpha) {
             // noop
+=======
+            mInterpolator = new LinearInterpolator();
+            mGradientResourceId = gradientResourceId;
+            mOpaqueColorResourceId = opaqueColorResourceId;
+            mSemiTransparentColorResourceId = semiTransparentColorResourceId;
+        }
+
+        public void updateResources(Resources res)  {
+            mOpaque = res.getColor(mOpaqueColorResourceId);
+            mSemiTransparent = res.getColor(mSemiTransparentColorResourceId);
+            // Retrieve the current bounds for mGradient so they can be set to
+            // the new drawable being loaded, otherwise the bounds will be (0, 0, 0, 0)
+            // and the gradient will not be drawn.
+            Rect bounds = mGradient.getBounds();
+            mGradient = res.getDrawable(mGradientResourceId);
+            mGradient.setBounds(bounds);
+>>>>>>> 9035415... SystemUI: Separate system bar BGs for themes
         }
 
         @Override
