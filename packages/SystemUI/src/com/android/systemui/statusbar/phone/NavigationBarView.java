@@ -137,6 +137,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     protected DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
     private final NavigationBarTransitions mBarTransitions;
+    private StatusBarBlockerTransitions mStatusBarBlockerTransitions;
 
     private int mNavBarButtonColor;
     private int mNavBarButtonColorMode;
@@ -382,6 +383,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     public BarTransitions getBarTransitions() {
         return mBarTransitions;
+    }
+
+    public BarTransitions getStatusBarBlockerTransitions() {
+        return mStatusBarBlockerTransitions;
     }
 
     public void setDelegateView(View view) {
@@ -1097,6 +1102,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             }
         });
 
+        mStatusBarBlockerTransitions = new StatusBarBlockerTransitions(
+                findViewById(R.id.status_bar_blocker));
+
         watchForAccessibilityChanges();
     }
 
@@ -1194,6 +1202,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         // force the low profile & disabled states into compliance
         mBarTransitions.init(mVertical);
+        mStatusBarBlockerTransitions.init();
         setDisabledFlags(mDisabledFlags, true /* force */);
         handleIMENavigation(mIMENavigation, true /* force */);
         setMenuVisibility(mShowMenu, true /* force */);
@@ -1448,6 +1457,23 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             mModLockDisabled = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.LOCKSCREEN_MODLOCK_ENABLED, 1) == 0;
             setDisabledFlags(mDisabledFlags, true /* force */);
+        }
+    }
+
+    private static class StatusBarBlockerTransitions extends BarTransitions {
+        public StatusBarBlockerTransitions(View statusBarBlocker) {
+            super(statusBarBlocker, R.drawable.status_background,
+                    R.color.status_bar_background_opaque,
+                    R.color.status_bar_background_semi_transparent);
+        }
+
+        public void init() {
+            applyModeBackground(-1, getMode(), false /*animate*/);
+        }
+
+        @Override
+        protected void onTransition(int oldMode, int newMode, boolean animate) {
+            super.onTransition(oldMode, newMode, animate);
         }
     }
 }
