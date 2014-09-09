@@ -627,6 +627,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
 
                 mContentDescriptionPhoneSignal = mContext.getString(
                         AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0]);
+
             } else {
                 int iconLevel;
                 int[] iconList;
