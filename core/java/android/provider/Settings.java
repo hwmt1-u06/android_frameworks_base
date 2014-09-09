@@ -3303,6 +3303,12 @@ public final class Settings {
 	* @hide
 	*/
 	public static final String SYSTEMUI_WEATHER_NOTIFICATION = "cfx_weather_notification";
+	
+	/**
+    * Toggle for 6 bar signal bars
+    * @hide
+    */
+    public static final String STATUSBAR_6BAR_SIGNAL = "statusbar_6bar_signal";
 
 	/**
 	* @hide
