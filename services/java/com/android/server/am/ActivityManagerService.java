@@ -30,8 +30,6 @@ import static com.android.server.am.ActivityStackSupervisor.HOME_STACK_ID;
 
 import android.app.AppOpsManager;
 import android.appwidget.AppWidgetManager;
-import android.content.pm.ThemeUtils;
-import android.content.res.ThemeConfig;
 import android.util.ArrayMap;
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
@@ -129,6 +127,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
+import android.content.res.CustomTheme;
 import android.graphics.Bitmap;
 import android.net.Proxy;
 import android.net.ProxyProperties;
@@ -331,8 +330,6 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     // How many bytes to write into the dropbox log before truncating
     static final int DROPBOX_MAX_SIZE = 256 * 1024;
-
-    static final String PROP_REFRESH_THEME = "sys.refresh_theme";
 
     /** Run all ActivityStacks through this */
     ActivityStackSupervisor mStackSupervisor;
@@ -2857,18 +2854,11 @@ public final class ActivityManagerService extends ActivityManagerNative
                 debugFlags |= Zygote.DEBUG_ENABLE_ASSERT;
             }
 
-            //Check if zygote should refresh its fonts
-            boolean refreshTheme = false;
-            if (SystemProperties.getBoolean(PROP_REFRESH_THEME, false)) {
-                SystemProperties.set(PROP_REFRESH_THEME, "false");
-                refreshTheme = true;
-            }
-
             // Start the process.  It will either succeed and return a result containing
             // the PID of the new process, or else throw a RuntimeException.
             Process.ProcessStartResult startResult = Process.start("android.app.ActivityThread",
                     app.processName, uid, uid, gids, debugFlags, mountExternal,
-                    app.info.targetSdkVersion, app.info.seinfo, refreshTheme, null);
+                    app.info.targetSdkVersion, app.info.seinfo, null);
 
             BatteryStatsImpl bs = mBatteryStatsService.getActiveStatistics();
             synchronized (bs) {
@@ -14200,9 +14190,6 @@ public final class ActivityManagerService extends ActivityManagerNative
         Configuration ci;
         synchronized(this) {
             ci = new Configuration(mConfiguration);
-            if (ci.themeConfig == null) {
-                ci.themeConfig = ThemeConfig.getBootTheme(mContext.getContentResolver());
-            }
         }
         return ci;
     }
@@ -14277,9 +14264,9 @@ public final class ActivityManagerService extends ActivityManagerNative
                                      values.userSetLocale);
                 }
 
-                if (values.themeConfig != null) {
-                    saveThemeResourceLocked(values.themeConfig,
-                            !values.themeConfig.equals(mConfiguration.themeConfig));
+                if (values.customTheme != null) {
+                    saveThemeResourceLocked(values.customTheme,
+                            !values.customTheme.equals(mConfiguration.customTheme));
                 }
 
                 mConfigurationSeq++;
@@ -14458,10 +14445,10 @@ public final class ActivityManagerService extends ActivityManagerNative
         return srec.launchedFromPackage;
     }
 
-    private void saveThemeResourceLocked(ThemeConfig t, boolean isDiff){
-        if(isDiff) {
-            Settings.Secure.putString(mContext.getContentResolver(),
-                    Configuration.THEME_PKG_CONFIGURATION_PERSISTENCE_PROPERTY, t.toJson());
+    private void saveThemeResourceLocked(CustomTheme t, boolean isDiff){
+        if(isDiff){
+            SystemProperties.set(Configuration.THEME_ID_PERSISTENCE_PROPERTY, t.getThemeId());
+            SystemProperties.set(Configuration.THEME_PACKAGE_NAME_PERSISTENCE_PROPERTY, t.getThemePackageName());  
         }
     }
 

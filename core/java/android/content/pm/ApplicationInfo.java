@@ -469,12 +469,30 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
      * @hide
      */
     public int enabledSetting = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
-
     /**
      * Is given application theme agnostic, i.e. behaves properly when default theme is changed.
      * {@hide}
      */
     public boolean isThemeable = false;
+
+    private static final String PLUTO_SCHEMA = "http://www.w3.org/2001/pluto.html";
+
+    /**
+     * @hide
+     */
+    public static final String PLUTO_ISTHEMEABLE_ATTRIBUTE_NAME = "isThemeable";
+
+    /**
+     * @hide
+     */
+    public static final String PLUTO_HANDLE_THEME_CONFIG_CHANGES_ATTRIBUTE_NAME = "handleThemeConfigChanges";
+
+    /**
+     * @hide
+     */
+    public static boolean isPlutoNamespace(String namespace) {
+        return namespace != null && namespace.equalsIgnoreCase(PLUTO_SCHEMA);
+    }
 
     /**
      * For convenient access to package's install location.
@@ -597,8 +615,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         descriptionRes = orig.descriptionRes;
         uiOptions = orig.uiOptions;
         backupAgentName = orig.backupAgentName;
-        protect = orig.protect;
         isThemeable = orig.isThemeable;
+        protect = orig.protect;
     }
 
 
@@ -639,8 +657,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         dest.writeString(backupAgentName);
         dest.writeInt(descriptionRes);
         dest.writeInt(uiOptions);
-        dest.writeInt(protect ? 1 : 0);
         dest.writeInt(isThemeable? 1 : 0);
+        dest.writeInt(protect ? 1 : 0);
     }
 
     public static final Parcelable.Creator<ApplicationInfo> CREATOR
@@ -680,8 +698,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         backupAgentName = source.readString();
         descriptionRes = source.readInt();
         uiOptions = source.readInt();
-        protect = source.readInt() != 0;
         isThemeable = source.readInt() != 0;
+        protect = source.readInt() != 0;
     }
 
     /**

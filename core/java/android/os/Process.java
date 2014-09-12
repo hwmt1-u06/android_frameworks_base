@@ -377,7 +377,7 @@ public class Process {
      * @param gids Additional group-ids associated with the process.
      * @param debugFlags Additional flags.
      * @param targetSdkVersion The target SDK version for the app.
-     * @param seInfo null-ok SE Android information for the new process.
+     * @param seInfo null-ok SELinux information for the new process.
      * @param zygoteArgs Additional arguments to supply to the zygote process.
      * 
      * @return An object that describes the result of the attempt to start the process.
@@ -391,11 +391,10 @@ public class Process {
                                   int debugFlags, int mountExternal,
                                   int targetSdkVersion,
                                   String seInfo,
-                                  boolean refreshTheme,
                                   String[] zygoteArgs) {
         try {
             return startViaZygote(processClass, niceName, uid, gid, gids,
-                    debugFlags, mountExternal, targetSdkVersion, seInfo, refreshTheme, zygoteArgs);
+                    debugFlags, mountExternal, targetSdkVersion, seInfo, zygoteArgs);
         } catch (ZygoteStartFailedEx ex) {
             Log.e(LOG_TAG,
                     "Starting VM process through Zygote failed");
@@ -558,7 +557,7 @@ public class Process {
      * new process should setgroup() to.
      * @param debugFlags Additional flags.
      * @param targetSdkVersion The target SDK version for the app.
-     * @param seInfo null-ok SE Android information for the new process.
+     * @param seInfo null-ok SELinux information for the new process.
      * @param extraArgs Additional arguments to supply to the zygote process.
      * @return An object that describes the result of the attempt to start the process.
      * @throws ZygoteStartFailedEx if process start failed for any reason
@@ -570,7 +569,6 @@ public class Process {
                                   int debugFlags, int mountExternal,
                                   int targetSdkVersion,
                                   String seInfo,
-                                  boolean refreshTheme,
                                   String[] extraArgs)
                                   throws ZygoteStartFailedEx {
         synchronized(Process.class) {
@@ -600,9 +598,6 @@ public class Process {
                 argsForZygote.add("--mount-external-multiuser");
             } else if (mountExternal == Zygote.MOUNT_EXTERNAL_MULTIUSER_ALL) {
                 argsForZygote.add("--mount-external-multiuser-all");
-            }
-            if (refreshTheme) {
-                argsForZygote.add("--refresh_theme");
             }
             argsForZygote.add("--target-sdk-version=" + targetSdkVersion);
 
