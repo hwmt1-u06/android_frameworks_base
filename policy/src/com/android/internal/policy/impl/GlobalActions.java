@@ -34,7 +34,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ThemeUtils;
 import android.content.pm.UserInfo;
 import android.database.ContentObserver;
 import android.graphics.drawable.BitmapDrawable;
@@ -82,6 +81,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.android.internal.app.ThemeUtils;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.beanstalk.ButtonConfig;
 import com.android.internal.util.beanstalk.ImageHelper;
