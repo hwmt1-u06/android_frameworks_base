@@ -5771,6 +5771,12 @@ public final class Settings {
          * @hide
          */
         public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
+		
+		/**
+         * Heads Up background color
+         * @hide
+         */
+        public static final String HEADS_UP_BG_COLOR = "heads_up_bg_color";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
