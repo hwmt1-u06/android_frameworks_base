@@ -57,6 +57,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
+import android.content.res.ThemeConfig;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -209,8 +210,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected int mCurrentUserId = 0;
 
-    protected FrameLayout mStatusBarContainer;
-
     protected int mLayoutDirection = -1; // invalid
     private Locale mLocale;
     private int mHeadsUpSnoozeTime = DEFAULT_TIME_HEADS_UP_SNOOZE;
@@ -283,6 +282,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected int mHoverState;
     protected ImageView mHoverButton;
     protected HoverCling mHoverCling;
+
+    protected FrameLayout mStatusBarContainer;
 
     // UI-specific methods
 
@@ -461,8 +462,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         mLocale = mContext.getResources().getConfiguration().locale;
         mLayoutDirection = TextUtils.getLayoutDirectionFromLocale(mLocale);
 
-        mStatusBarContainer = new FrameLayout(mContext);
-
         mNotificationHelper = new NotificationHelper(this, mContext);
 
         mPeek = new Peek(this, mContext);
@@ -472,6 +471,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         mPeek.setNotificationHelper(mNotificationHelper);
         mHover.setNotificationHelper(mNotificationHelper);
+
+        mStatusBarContainer = new FrameLayout(mContext);
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();
@@ -1326,10 +1327,15 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         View contentViewLocal = null;
         View bigContentViewLocal = null;
+        final ThemeConfig themeConfig = mContext.getResources().getConfiguration().themeConfig;
+        String themePackageName = themeConfig != null ?
+                themeConfig.getOverlayPkgNameForApp(mContext.getPackageName()) : null;
         try {
-            contentViewLocal = contentView.apply(mContext, adaptive, mOnClickHandler);
+            contentViewLocal = contentView.apply(mContext, adaptive, mOnClickHandler,
+                    themePackageName);
             if (bigContentView != null) {
-                bigContentViewLocal = bigContentView.apply(mContext, adaptive, mOnClickHandler);
+                bigContentViewLocal = bigContentView.apply(mContext, adaptive, mOnClickHandler,
+                        themePackageName);
             }
         }
         catch (RuntimeException e) {

@@ -17,6 +17,7 @@
 
 package android.content.pm;
 
+import android.app.ComposedIconInfo;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -42,7 +43,6 @@ import android.content.pm.ServiceInfo;
 import android.content.pm.UserInfo;
 import android.content.pm.VerificationParams;
 import android.content.pm.VerifierDeviceIdentity;
-import android.content.pm.ThemeInfo;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.content.IntentSender;
@@ -429,4 +429,8 @@ interface IPackageManager {
     /** Protected Apps */
     void setComponentProtectedSetting(in ComponentName componentName, in boolean newState,
             int userId);
+
+    /** Themes */
+    void updateIconMapping(String pkgName);
+    ComposedIconInfo getComposedIconInfo();
 }

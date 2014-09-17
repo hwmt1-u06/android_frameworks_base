@@ -39,14 +39,13 @@ import android.content.pm.ServiceInfo;
 import android.content.res.AssetManager;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
-import android.content.res.CustomTheme;
-import android.content.res.PackageRedirectionMap;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDebug;
 import android.database.sqlite.SQLiteDebug.DbStats;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.hardware.display.DisplayManagerGlobal;
 import android.net.IConnectivityManager;
 import android.net.Proxy;
@@ -163,7 +162,7 @@ public final class ActivityThread {
     private static final int LOG_ON_PAUSE_CALLED = 30021;
     private static final int LOG_ON_RESUME_CALLED = 30022;
 
-    private ContextImpl mSystemContext;
+    static ContextImpl mSystemContext = null;
 
     static IPackageManager sPackageManager;
 
@@ -1539,11 +1538,20 @@ public final class ActivityThread {
     /**
      * Creates the top level resources for the given package.
      */
-    Resources getTopLevelResources(String resDir,
+    Resources getTopLevelResources(String resDir, String[] overlayDirs,
             int displayId, Configuration overrideConfiguration,
-            LoadedApk pkgInfo) {
-        return mResourcesManager.getTopLevelResources(resDir, displayId, overrideConfiguration,
-                pkgInfo.getCompatibilityInfo(), null);
+            LoadedApk pkgInfo, Context context, String pkgName) {
+        return mResourcesManager.getTopLevelResources(resDir, overlayDirs, displayId, pkgName,
+                overrideConfiguration, pkgInfo.getCompatibilityInfo(), null, context);
+    }
+
+    /**
+     * Creates the top level resources for the given package.
+     */
+    Resources getTopLevelThemedResources(String resDir, int displayId, LoadedApk pkgInfo,
+                                         String pkgName, String themePkgName) {
+        return mResourcesManager.getTopLevelThemedResources(resDir, displayId, pkgName,
+                themePkgName, pkgInfo.getCompatibilityInfo(), null);
     }
 
     final Handler getHandler() {
@@ -2209,13 +2217,10 @@ public final class ActivityThread {
             if (!mInstrumentation.onException(activity, e)) {
                 if (e instanceof InflateException) {
                     Log.e(TAG, "Failed to inflate", e);
-                    String pkg = null;
-                    if (r.packageInfo != null && !TextUtils.isEmpty(r.packageInfo.getPackageName())) {
-                        pkg = r.packageInfo.getPackageName();
-                    }
-                    Intent intent = new Intent(Intent.ACTION_APP_LAUNCH_FAILURE,
-                            (pkg != null)? Uri.fromParts("package", pkg, null) : null);
-                    getSystemContext().sendBroadcast(intent);
+                    sendAppLaunchFailureBroadcast(r);
+                } else if (e instanceof Resources.NotFoundException) {
+                    Log.e(TAG, "Failed to find resource", e);
+                    sendAppLaunchFailureBroadcast(r);
                 }
                 throw new RuntimeException(
                     "Unable to start activity " + component
@@ -2224,6 +2229,16 @@ public final class ActivityThread {
         }
 
         return activity;
+    }
+
+    private void sendAppLaunchFailureBroadcast(ActivityClientRecord r) {
+        String pkg = null;
+        if (r.packageInfo != null && !TextUtils.isEmpty(r.packageInfo.getPackageName())) {
+            pkg = r.packageInfo.getPackageName();
+        }
+        Intent intent = new Intent(Intent.ACTION_APP_LAUNCH_FAILURE,
+                (pkg != null)? Uri.fromParts("package", pkg, null) : null);
+        getSystemContext().sendBroadcast(intent);
     }
 
     private Context createBaseContextForActivity(ActivityClientRecord r,
@@ -3970,8 +3985,10 @@ public final class ActivityThread {
         if (configDiff != 0) {
             // Ask text layout engine to free its caches if there is a locale change
             boolean hasLocaleConfigChange = ((configDiff & ActivityInfo.CONFIG_LOCALE) != 0);
-            if (hasLocaleConfigChange) {
+            boolean hasThemeConfigChange = ((configDiff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0);
+            if (hasLocaleConfigChange || hasThemeConfigChange) {
                 Canvas.freeTextLayoutCaches();
+                Typeface.recreateDefaults();
                 if (DEBUG_CONFIGURATION) Slog.v(TAG, "Cleared TextLayout Caches");
             }
         }

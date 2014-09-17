@@ -3039,6 +3039,12 @@ public final class Settings {
         public static final String IDENTICONS_STYLE = "identicons_style";
 
         /**
+         * Whether to enable the modlock keyguard
+         * @hide
+         */
+        public static final String LOCKSCREEN_MODLOCK_ENABLED = "lockscreen_modlock_enabled";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
          * instead
          * @hide
@@ -5160,18 +5166,6 @@ public final class Settings {
         public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
-         * Sets the lockscreen background style
-         * @hide
-         */
-        public static final String LOCKSCREEN_BACKGROUND_STYLE = "lockscreen_background_style";
-
-        /**
-         * Color for lockscreen background when set to color fill
-         * @hide
-         */
-        public static final String LOCKSCREEN_BACKGROUND_COLOR = "lockscreen_background_color";
-
-        /**
          * Should call status sounds be player
          *
          * @hide
@@ -5751,6 +5745,34 @@ public final class Settings {
         public static final String PROXIMITY_ON_WAKE = "proximity_on_wake";
 
         /**
+         * Recent card background color
+         *
+         * @hide
+         */
+        public static final String RECENT_CARD_BG_COLOR = "recent_card_bg_color";
+
+        /**
+         * Recent card text color
+         *
+         * @hide
+         */
+        public static final String RECENT_CARD_TEXT_COLOR = "recent_card_text_color";
+
+        /**
+         * Whether to enable voice wakeup.  The value is boolean (1 or 0).
+         * @hide
+         */
+        public static final String VOICE_WAKEUP = "voice_wakeup";
+
+        /**
+         * An intent (a flattened Uri String) to launch when user voice launch
+         * action is detected. An empty or null string will launch the default
+         * voice search activity.
+         * @hide
+         */
+        public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5841,6 +5863,7 @@ public final class Settings {
             POWER_MENU_SOUND_ENABLED,
             POWER_MENU_USER_ENABLED,
             LOCKSCREEN_BATTERY_VISIBILITY,
+            LOCKSCREEN_MODLOCK_ENABLED,
             PHONE_BLACKLIST_ENABLED,
             PHONE_BLACKLIST_NOTIFY_ENABLED,
             PHONE_BLACKLIST_PRIVATE_NUMBER_MODE,
@@ -8047,6 +8070,24 @@ public final class Settings {
          * @hide
          */
         public static final String PROTECTED_COMPONENTS = "protected_components";
+
+        /**
+         * Default theme to use.  If empty, use holo.
+         * @hide
+         */
+        public static final String DEFAULT_THEME_PACKAGE = "default_theme_package";
+
+        /**
+         * A '|' delimited list of theme components to apply from the default theme on first boot.
+         * Components can be one or more of the "mods_XXXXXXX" found in
+         * {@link ThemesContract$ThemesColumns}.  Leaving this field blank assumes all components
+         * will be applied.
+         *
+         * ex: mods_icons|mods_overlays|mods_homescreen
+         *
+         * @hide
+         */
+        public static final String DEFAULT_THEME_COMPONENTS = "default_theme_components";
 
         /**
          * This are the settings to be backed up.

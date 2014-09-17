@@ -31,6 +31,28 @@
     <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_changePhoneBlacklist">Allows an app to change the phone numbers that are blocked for incoming calls or messages.</string>
 
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_accessThemeService">access theme service</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_accessThemeService">Allows an app to access the theme service. Should never be needed for normal apps.</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_readThemes">read your theme info</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_readThemesDesc">Allows the app to read your themes and
+       determine which theme you have applied.</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_writeThemes">modify your themes</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_writeThemesDesc">Allows the app to insert new themes and
+       modify which theme you have applied.</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want the application to do this. -->
+    <string name="permlab_setKeyguardWallpaper">set keyguard wallpaper</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_setKeyguardWallpaper">Allows an app to change the lock screen wallpaper.</string>
+
     <!-- App ops requests -->
     <string name="app_ops_access_camera">access the camera</string>
     <string name="app_ops_access_location">access your location</string>
@@ -78,4 +100,32 @@
     <string name="privacy_guard_dialog_summary"><xliff:g id="app">%1$s</xliff:g> would like to <xliff:g id="op">%2$s</xliff:g>.</string>
 
     <string name="permission_remember_choice">Remember my choice</string>
+
+    <!-- SD card storage notification -->
+    <string name="sd_ext_media_checking_notification_title">Preparing SD card</string>
+    <string name="sd_ext_media_checking_notification_message">Checking SD card for errors.</string>
+    <string name="sd_ext_media_nofs_notification_title">Blank SD card</string>
+    <string name="sd_ext_media_nofs_notification_message">SD card is blank or has unsupported filesystem.</string>
+    <string name="sd_ext_media_unmountable_notification_title">Damaged SD card</string>
+    <string name="sd_ext_media_unmountable_notification_message">SD card is damaged. Try reformatting it.</string>
+    <string name="sd_ext_media_badremoval_notification_title">SD card unexpectedly removed</string>
+    <string name="sd_ext_media_badremoval_notification_message">Unmount SD card before removing to avoid data loss.</string>
+    <string name="sd_ext_media_safe_unmount_notification_title">SD card safe to remove</string>
+    <string name="sd_ext_media_safe_unmount_notification_message">You can safely remove SD card.</string>
+    <string name="sd_ext_media_nomedia_notification_title">Removed SD card</string>
+    <string name="sd_ext_media_nomedia_notification_message">SD card removed. Insert a new one.</string>
+
+    <!-- USB storage notification -->
+    <string name="usb_ext_media_checking_notification_title">Preparing USB storage</string>
+    <string name="usb_ext_media_checking_notification_message">Checking USB storage for errors.</string>
+    <string name="usb_ext_media_nofs_notification_title">Blank USB storage</string>
+    <string name="usb_ext_media_nofs_notification_message">USB storage is blank or has unsupported filesystem.</string>
+    <string name="usb_ext_media_unmountable_notification_title">Damaged USB storage</string>
+    <string name="usb_ext_media_unmountable_notification_message">USB storage is damaged. Try reformatting it.</string>
+    <string name="usb_ext_media_badremoval_notification_title">USB storage unexpectedly removed</string>
+    <string name="usb_ext_media_badremoval_notification_message">Unmount USB storage before removing to avoid data loss.</string>
+    <string name="usb_ext_media_safe_unmount_notification_title">USB storage safe to remove</string>
+    <string name="usb_ext_media_safe_unmount_notification_message">You can safely remove USB storage.</string>
+    <string name="usb_ext_media_nomedia_notification_title">Removed USB storage</string>
+    <string name="usb_ext_media_nomedia_notification_message">USB storage removed. Insert new media.</string>
 </resources>
