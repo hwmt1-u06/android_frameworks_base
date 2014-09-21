@@ -58,6 +58,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_WIFI;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_WIFIAP;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REBOOT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_INTERNALMEMORY;
+import static com.android.internal.util.slim.QSConstants.TILE_CPUFREQ;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REMOTEDISPLAY;
@@ -125,6 +126,7 @@ import com.android.systemui.quicksettings.WifiAPTile;
 import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
+import com.android.systemui.quicksettings.CPUFreqTile;
 
 
 
@@ -188,6 +190,7 @@ public class QuickSettingsController {
         boolean mobileDataSupported = DeviceUtils.deviceSupportsMobileData(mContext);
         boolean lteSupported = DeviceUtils.deviceSupportsLte(mContext);
         boolean torchSupported = DeviceUtils.deviceSupportsTorch(mContext);
+        boolean cpufreqSupported = DeviceUtils.deviceSupportsCPUFreq();
 
         if (!bluetoothSupported) {
             TILES_DEFAULT.remove(TILE_BLUETOOTH);
@@ -288,6 +291,9 @@ public class QuickSettingsController {
                 qs = new FastChargeTile(mContext, this);
             } else if (tile.contains(TILE_ONTHEGO)) {
                 qs = new OnTheGoTile(mContext, this);
+            } else if (tile.contains(TILE_CPUFREQ)) {
+                if (cpufreqSupported) {
+                    qs = new CPUFreqTile(mContext, this);				
             } else if (tile.equals(TILE_BATTERYSAVER)) {
                 qs = new BatterySaverTile(mContext, this);
             } else if (tile.equals(TILE_NETWORKADB)) {
