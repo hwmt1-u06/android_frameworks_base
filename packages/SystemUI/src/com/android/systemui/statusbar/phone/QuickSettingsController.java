@@ -293,7 +293,8 @@ public class QuickSettingsController {
                 qs = new OnTheGoTile(mContext, this);
             } else if (tile.contains(TILE_CPUFREQ)) {
                 if (cpufreqSupported) {
-                    qs = new CPUFreqTile(mContext, this);				
+                qs = new CPUFreqTile(mContext, this);
+			    }				
             } else if (tile.equals(TILE_BATTERYSAVER)) {
                 qs = new BatterySaverTile(mContext, this);
             } else if (tile.equals(TILE_NETWORKADB)) {
