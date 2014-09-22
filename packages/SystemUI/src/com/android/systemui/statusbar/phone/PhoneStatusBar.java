@@ -397,9 +397,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     ThemeConfig mCurrentTheme;
     private boolean mRecreating = false;
 
-    // Carrier Text Logo
     private ImageView mCarrierLogo;
-    private boolean mCarrierLogoEnabled = false;
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -609,9 +607,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER_LOGO), false, this,
-                    UserHandle.USER_ALL);
             update();
         }
 
@@ -808,50 +803,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             updateBatteryIcons();
 	    updateCustomHeaderStatus();
-
-            mCarrierLogoEnabled = Settings.System.getIntForUser(
-                    resolver, Settings.System.STATUS_BAR_CARRIER_LOGO, 0
-                    , UserHandle.USER_CURRENT) == 1;
-            setCarrierVisibility();
-
-            updateBatteryIcons();
-
-            mWeatherEnabled = Settings.System.getBoolean(resolver,
-                    Settings.System.USE_WEATHER, false);
-
-            mWeatherPanelEnabled = (Settings.System.getInt(resolver,
-                    Settings.System.STATUSBAR_WEATHER_STYLE, 0) == 2
-                    && mWeatherEnabled);
-
-            mWeatherPanelStyle = Settings.System.getInt(resolver,
-                    Settings.System.STATUSBAR_WEATHER_STYLE, 0);
-
-            if (mWeatherEnabled) {
-                switch (mWeatherPanelStyle) {
-                    case 0:
-                    case 1:
-                    case 4:
-                        mWeatherHeader.setVisibility(View.GONE);
-                        mWeatherHeader.setEnabled(false);
-                        mWeatherPanel.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        mWeatherHeader.setVisibility(View.GONE);
-                        mWeatherHeader.setEnabled(false);
-                        mWeatherPanel.setVisibility(View.VISIBLE);
-                        break;
-                    case 3:
-                    case 5:
-                        mWeatherHeader.setVisibility(View.VISIBLE);
-                        mWeatherHeader.setEnabled(true);
-                        mWeatherPanel.setVisibility(View.GONE);
-                        break;
-                }
-            } else {
-                mWeatherHeader.setVisibility(View.GONE);
-                mWeatherHeader.setEnabled(false);
-                mWeatherPanel.setVisibility(View.GONE);
-            }
 
             mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.REMINDER_ALERT_INTERVAL, 1500, UserHandle.USER_CURRENT);
@@ -4433,16 +4384,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    private void setCarrierVisibility() {
-        if (mCarrierLogo != null) {
-            mCarrierLogo.setVisibility(mCarrierLogoEnabled ? View.VISIBLE : View.GONE);
-        }
-    }
-
     public void setCarrierVisibility(int vis) {
-        if (mCarrierLogoEnabled) {
-            mCarrierLogo.setVisibility(vis);
-        }
+        mCarrierLogo.setVisibility(vis);
     }
 
     public void setCarrierImageResource(int res) {
