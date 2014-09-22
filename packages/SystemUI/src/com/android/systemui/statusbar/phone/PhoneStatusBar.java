@@ -814,7 +814,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                   , UserHandle.USER_CURRENT) == 1;
           setCarrierVisibility();
 
-
             mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.REMINDER_ALERT_INTERVAL, 1500, UserHandle.USER_CURRENT);
 
