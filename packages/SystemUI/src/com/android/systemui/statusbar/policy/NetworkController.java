@@ -27,6 +27,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
+import android.text.TextUtils;
 import android.net.wifi.WifiManager;
 import android.net.wimax.WimaxManagerConstants;
 import android.os.Bundle;
@@ -147,7 +148,6 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
 
     // our ui
     Context mContext;
-    ContentResolver mCr;
     ArrayList<ImageView> mPhoneSignalIconViews = new ArrayList<ImageView>();
     ArrayList<ImageView> mDataDirectionIconViews = new ArrayList<ImageView>();
     ArrayList<ImageView> mDataDirectionOverlayIconViews = new ArrayList<ImageView>();
@@ -209,7 +209,6 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
      */
     public NetworkController(Context context) {
         mContext = context;
-        mCr = context.getContentResolver();
         final Resources res = context.getResources();
 
         ConnectivityManager cm = (ConnectivityManager)mContext.getSystemService(

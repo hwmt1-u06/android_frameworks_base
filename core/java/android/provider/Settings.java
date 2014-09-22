@@ -3522,12 +3522,6 @@ public final class Settings {
         public static final String PIE_BUTTON_OUTLINE_COLOR = "pie_button_outline_color";
 
         /**
-         * Show the carrier logo on the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_CARRIER_LOGO = "status_bar_carrier_logo";
-
-       /**
          * Pie background color
          * @hide
          */
@@ -4357,11 +4351,40 @@ public final class Settings {
         public static final String POWER_MENU_PROFILES_ENABLED = "power_menu_profiles_enabled";
 
 	/**
+	 * Whether incomming call UI stays in background
+	 *
+	 * @hide
+	 */
+	public static final String CALL_UI_IN_BACKGROUND = "call_ui_in_background";
+
+	/**
+	 * Whether incomming call UI stays in background
+	 *
+	 * @hide
+	 */
+	public static final String NON_INTRUSIVE_INCALL = "non_intrusive_incall";
+
+	/**
+	 * Whether incomming call UI stays in background
+	 *
+	 * @hide
+	 */
+	public static final String T9_SEARCH_INPUT_LOCALE = "t9_search_input_locale";
+
+	/**
          * Whether incomming call UI stays in background and shows as heads up notification
          *
          * @hide
          */
         public static final String CALL_UI_AS_HEADS_UP = "call_ui_as_heads_up";
+
+	/**
+	 * Whether flip action during incomming call should mute or dismiss
+	 * the call (mute = 0, dismiss = 1, nothing = 2 (default))
+	 *
+	 * @hide
+	 */
+	public static final String CALL_FLIP_ACTION_KEY = "call_flip_action_key";
 
 	/**
          * Whether power menu screen record is enabled
@@ -4804,6 +4827,12 @@ public final class Settings {
          */
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
+	/**
+	 * Carrier Logo toggle
+	 * @hide
+	 */
+	public static final String TOGGLE_CARRIER_LOGO = "toggle_carrier_logo";
+
        /**
         * Sets the portrait background of notification drawer
         * @hide
@@ -4925,13 +4954,6 @@ public final class Settings {
          * @hide
          */
         public static final String MENU_VISIBILITY = "menu_visibility";
-
-	/**
-	 * Detailed incall info
-	 *
-	 * @hide
-	 */
-	public static final String DETAILED_INCALL_INFO = "detailed_incall_info";
 
         /**
           * Stores values for notification shortcut targets
@@ -5144,13 +5166,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
-
-        /**
-         * Should the non-intrsive incall ui be used
-         *
-         * @hide
-         */
-        public static final String NON_INTRUSIVE_INCALL = "non_intrusive_incall";
 
         /**
 	 * @hide
