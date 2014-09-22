@@ -3528,7 +3528,7 @@ public final class Settings {
         public static final String STATUS_BAR_CARRIER_LOGO = "status_bar_carrier_logo";
 
        /**
-         * HALO enabled, should default to 0 (HALO is disabled)
+         * Pie background color
          * @hide
          */
         public static final String PIE_BACKGROUND_COLOR = "pie_background_color";
