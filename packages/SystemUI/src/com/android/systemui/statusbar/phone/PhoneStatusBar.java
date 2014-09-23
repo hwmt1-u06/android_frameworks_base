@@ -398,7 +398,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mRecreating = false;
 
     private ImageView mCarrierLogo;
-    private boolean mCarrierLogoEnabled = false;
 
     // for disabling the status bar
     int mDisabled = 0;

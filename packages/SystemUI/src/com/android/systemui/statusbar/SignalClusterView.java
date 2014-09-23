@@ -230,19 +230,21 @@ public class SignalClusterView
             mMobileGroup.setContentDescription(mMobileTypeDescription + " " + mMobileDescription);
             mMobileGroup.setVisibility(View.VISIBLE);
 
-            if (mCarrierIconId > 0) {
-                mStatusBar.setCarrierImageResource(mCarrierIconId);
-                mStatusBar.setCarrierVisibility(View.VISIBLE);
-            } else {
-                mStatusBar.setCarrierVisibility(View.GONE);
-            }
-
             if (mShowSignalText && !mIsAirplaneMode) {
                 mMobile.setVisibility(View.GONE);
                 mMobileText.setVisibility(View.VISIBLE);
             } else{
                 mMobile.setVisibility(View.VISIBLE);
                 mMobileText.setVisibility(View.GONE);
+            }
+            if (mCarrierIconId != -1) {
+                mStatusBar.setCarrierImageResource(mCarrierIconId);
+            }
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                     Settings.System.TOGGLE_CARRIER_LOGO, 0) != 1) {
+                     mStatusBar.setCarrierVisibility(View.VISIBLE);
+            } else {
+                mStatusBar.setCarrierVisibility(View.GONE);
             }
         } else {
             mMobileGroup.setVisibility(View.GONE);
