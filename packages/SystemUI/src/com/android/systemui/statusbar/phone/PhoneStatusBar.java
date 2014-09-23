@@ -397,9 +397,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     ThemeConfig mCurrentTheme;
     private boolean mRecreating = false;
 
-    // Carrier Text Logo
     private ImageView mCarrierLogo;
-    private boolean mCarrierLogoEnabled = false;  
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -609,9 +607,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER_LOGO), false, this,
-                    UserHandle.USER_ALL);
             update();
         }
 
@@ -808,11 +803,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             updateBatteryIcons();
 	    updateCustomHeaderStatus();
-	    
-          mCarrierLogoEnabled = Settings.System.getIntForUser(
-                  resolver, Settings.System.STATUS_BAR_CARRIER_LOGO, 0
-                  , UserHandle.USER_CURRENT) == 1;
-          setCarrierVisibility();
 
             mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.REMINDER_ALERT_INTERVAL, 1500, UserHandle.USER_CURRENT);
