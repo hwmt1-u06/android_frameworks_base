@@ -391,13 +391,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private StatusHeaderMachine mStatusHeaderMachine;
     private Runnable mStatusHeaderUpdater;
+    private ImageView mCarrierLogo;
+    private boolean mCarrierLogoEnabled = false;
 
     // last theme that was applied in order to detect theme change (as opposed
     // to some other configuration change).
     ThemeConfig mCurrentTheme;
     private boolean mRecreating = false;
-
-    private ImageView mCarrierLogo;
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -829,6 +829,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			mWeatherEnabled = weatherHolder;
 			enableOrDisableWeather();
 		}
+        mCarrierLogoEnabled = Settings.System.getIntForUser(
+                resolver, Settings.System.TOGGLE_CARRIER_LOGO, 0
+                , UserHandle.USER_CURRENT) == 1;
+        setCarrierVisibility();
+        updateCustomHeaderStatus();		
         }
     }
 
@@ -4384,8 +4389,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
+    private void setCarrierVisibility() {
+        if (mCarrierLogo != null) {
+            mCarrierLogo.setVisibility(mCarrierLogoEnabled ? View.VISIBLE : View.GONE);
+        }
+    }
+
     public void setCarrierVisibility(int vis) {
-        mCarrierLogo.setVisibility(vis);
+        if (mCarrierLogoEnabled) {
+            mCarrierLogo.setVisibility(vis);
+        }
     }
 
     public void setCarrierImageResource(int res) {
