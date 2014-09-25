@@ -196,7 +196,7 @@ public class SignalClusterView
             mMobileType.setImageDrawable(null);
         }
 
-        if (mAirplane != null) {
+        if(mAirplane != null) {
             mAirplane.setImageDrawable(null);
         }
 
