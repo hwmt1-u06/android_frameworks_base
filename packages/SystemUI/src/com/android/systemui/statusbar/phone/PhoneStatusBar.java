@@ -607,6 +607,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.TOGGLE_CARRIER_LOGO), false, this);					
             update();
         }
 
@@ -829,6 +831,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			mWeatherEnabled = weatherHolder;
 			enableOrDisableWeather();
 		}
+
         mCarrierLogoEnabled = Settings.System.getIntForUser(
                 resolver, Settings.System.TOGGLE_CARRIER_LOGO, 0
                 , UserHandle.USER_CURRENT) == 1;
