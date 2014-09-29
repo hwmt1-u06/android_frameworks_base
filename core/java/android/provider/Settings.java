@@ -3341,12 +3341,6 @@ public final class Settings {
 	* @hide
 	*/
 	public static final String SYSTEMUI_WEATHER_NOTIFICATION = "cfx_weather_notification";
-	
-	/**
-    * Toggle for 6 bar signal bars
-    * @hide
-    */
-    public static final String STATUSBAR_6BAR_SIGNAL = "statusbar_6bar_signal";
 
 	/**
 	* @hide
@@ -3402,23 +3396,33 @@ public final class Settings {
         */
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
-	/**
-         * Whether to show the network status in the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_STATS = "status_bar_network_stats";
- 
         /**
-         * Frequency at which stats are updated, in milliseconds
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL = "status_bar_network_stats_update_frequency";
-
-	/**
          * Network stats Color style
          * @hide
          */
-        public static final String STATUS_BAR_NETWORK_COLOR = "status_bar_network_usage_color"; 
+        public static final String NETWORK_TRAFFIC_COLOR = "network_traffic_color";
+
+        /**
+         * Whether or not to hide the network traffic indicator when there is no activity
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE = "network_traffic_autohide";
+
+        /**
+         * Network traffic inactivity threshold (default is 10 kBs)
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
+
+        /**
+         * Network traffic indicator, goes from least to greatest significant bitwise
+         * 0 = Display up-stream traffic if set
+         * 1 = Display down-stream traffic if set
+         * 2 = Show as Byte/s if set
+         * 16-31 = Refresh interval(ms)  min: 250  max: 32750  default: 1000
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state"; 
 
         /**
          * Enable looking up of phone numbers of nearby places
@@ -3614,12 +3618,6 @@ public final class Settings {
         public static final String PIE_BUTTONS_CONFIG_SECOND_LAYER =
                 "pie_buttons_config_second_layer";
 
-        /**
-         * Network stats hide if there's no traffic
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_HIDE = "status_bar_network_hide";
-
        /**
 	*
 	* SMOOTH PROGRESS BAR Mirror
@@ -3725,6 +3723,13 @@ public final class Settings {
          */
         public static final String QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE =
                 "quick_tiles_per_row_duplicate_landscape";
+
+        /**
+         * QuickSettings tiles background color
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_CUSTOM_COLOR = "quick_tiles_custom_color";
 
         /**
          * Color of QuickSettings tiles text
@@ -3850,6 +3855,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_SIGNAL_TEXT = "status_bar_signal";
+
+	/**
+	 * Toggle for 6 bar signal bars
+	 * @hide
+	 */
+	public static final String STATUSBAR_6BAR_SIGNAL = "statusbar_6bar_signal";
 
         /**
          * Hide Singal Bars
@@ -4876,6 +4887,12 @@ public final class Settings {
 	 * @hide
 	 */
 	public static final String TOGGLE_CARRIER_LOGO = "toggle_carrier_logo";
+	
+	/**
+	 * Hides carrier label in keyguard
+	 * @hide
+	 */
+	public static final String NO_CARRIER_LABEL = "no_carrier_label";	
 
        /**
         * Sets the portrait background of notification drawer
@@ -5836,6 +5853,27 @@ public final class Settings {
          * @hide
          */
         public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
+
+        /**
+         * Quick Settings Quick access ribbon
+         *
+         * @hide
+         */
+        public static final String QS_QUICK_ACCESS = "qs_quick_access";
+
+        /**
+         * Quick Settings Quick access ribbon - linked layout
+         *
+         * @hide
+         */
+        public static final String QS_QUICK_ACCESS_LINKED = "qs_quick_access_linked";
+
+        /**
+         * Quick Settings Ribbon Tiles to Use
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_RIBBON_TILES = "quick_settings_ribbon_tiles";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

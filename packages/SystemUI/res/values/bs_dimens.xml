@@ -17,9 +17,6 @@
 -->
 <resources>
 
-    <!-- Network stats text size -->
-    <dimen name="network_stats_text_size">9dp</dimen>
-
     <!-- Notification Shortcuts -->
     <dimen name="notification_shortcuts_close_handle_height">28dp</dimen>
     <dimen name="notification_shortcuts_spacing_height">88dp</dimen>
@@ -109,4 +106,11 @@
 
     <!-- Statusbar Carrier Logo -->
     <dimen name="statusbar_carrier_logo_size">20sp</dimen>
+    
+    <!-- Network traffic monitor single-line text size -->
+    <dimen name="net_traffic_single_text_size">12dp</dimen>
+
+    <!-- Network traffic monitor multi-line text size -->
+    <dimen name="net_traffic_multi_text_size">9dp</dimen>
+    
 </resources>

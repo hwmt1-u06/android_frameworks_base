@@ -157,13 +157,14 @@ public class QuickSettingsController {
     private ContentObserver mObserver;
     public PhoneStatusBar mStatusBarService;
     private final String mSettingsKey;
+    private final boolean mRibbonMode;
 
     private InputMethodTile mIMETile;
 
     private static final int MSG_UPDATE_TILES = 1000;
 
     public QuickSettingsController(Context context, QuickSettingsContainerView container,
-            PhoneStatusBar statusBarService, String settingsKey) {
+            PhoneStatusBar statusBarService, String settingsKey, boolean ribbonMode) {
         mContext = context;
         mContainerView = container;
         mHandler = new Handler() {
@@ -181,6 +182,7 @@ public class QuickSettingsController {
         mStatusBarService = statusBarService;
         mQuickSettingsTiles = new ArrayList<QuickSettingsTile>();
         mSettingsKey = settingsKey;
+        mRibbonMode = ribbonMode;
     }
 
     void loadTiles() {
@@ -310,6 +312,10 @@ public class QuickSettingsController {
             }
         }
 
+        if (mRibbonMode) {
+            return;
+        }
+
         // Load the dynamic tiles
         // These toggles must be the last ones added to the view, as they will show
         // only when they are needed
@@ -380,6 +386,23 @@ public class QuickSettingsController {
         loadTiles();
         setupBroadcastReceiver();
         setupContentObserver();
+        final ContentResolver resolver = mContext.getContentResolver();
+        if (mRibbonMode) {
+            for (QuickSettingsTile t : mQuickSettingsTiles) {
+                t.switchToRibbonMode();
+            }
+        } else if (Settings.System.getInt(resolver, //ribbon custom colors aren't supported ATM
+                Settings.System.QUICK_TILES_CUSTOM_COLOR, 0) == 1) {
+            int bgColor = Settings.System.getInt(resolver,
+                    Settings.System.QUICK_TILES_BG_COLOR, -2);
+            int presColor = Settings.System.getInt(resolver,
+                    Settings.System.QUICK_TILES_BG_PRESSED_COLOR, -2);
+            float bgAlpha = Settings.System.getFloat(resolver,
+                Settings.System.QUICK_TILES_BG_ALPHA, 0.0f);
+            for (QuickSettingsTile t : mQuickSettingsTiles) {
+                t.setColors(bgColor, presColor, bgAlpha);
+            }
+        }
     }
 
     void setupContentObserver() {
