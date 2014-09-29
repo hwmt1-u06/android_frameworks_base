@@ -661,7 +661,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
 
                 if (mUseSixBar) {
                     iconList = TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH_6BAR[mInetCondition];
-                    mDataSignalIconId = (mHideSignal ? 0 : TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH_6BAR[mInetCondition][iconLevel]);
+                    mDataSignalIconId = TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH_6BAR[mInetCondition][iconLevel];
                     mQSPhoneSignalIconId =
                             TelephonyIcons.QS_TELEPHONY_SIGNAL_STRENGTH_6BAR[mInetCondition][iconLevel];
                 } else {
@@ -683,8 +683,8 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
                     mQSPhoneSignalIconId =
                             TelephonyIcons.QS_TELEPHONY_SIGNAL_STRENGTH[mInetCondition][iconLevel];
                 }
-                mPhoneSignalIconId = (mHideSignal ? 0 : iconList[iconLevel]);
 
+                mPhoneSignalIconId = (mHideSignal ? 0 : iconList[iconLevel]);
                 mContentDescriptionPhoneSignal = mContext.getString(
                         AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[iconLevel]);
             }
