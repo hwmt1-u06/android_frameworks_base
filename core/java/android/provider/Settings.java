@@ -3332,21 +3332,6 @@ public final class Settings {
          */
         public static final String ALLOW_MULTIUSER = "allow_multiuser";
 
-	/**
-	* @hide
-	*/
-	public static final String SYSTEMUI_WEATHER_HEADER_VIEW = "cfx_systemui_header_weather_view";
-
-	/**
-	* @hide
-	*/
-	public static final String SYSTEMUI_WEATHER_NOTIFICATION = "cfx_weather_notification";
-
-	/**
-	* @hide
-	*/
-	public static final String SYSTEMUI_WEATHER_ICON = "cfx_weather_icon";
-
         /**
          * Navigation controls to Use
          *
@@ -3377,12 +3362,6 @@ public final class Settings {
         * @hide
         */
         public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
-
-       /**
-         * HALO enabled, should default to 0 (HALO is disabled)
-         * @hide
-         */
-        public static final String HALO_ENABLED = "halo_enabled";
 
         /**
         * Notification Power Widget - Custom Torch Mode
@@ -4690,6 +4669,14 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK = "status_bar_clock";
 
         /**
+         * Show or hide clock on lockscreen
+         * 0 - hide (default)
+         * 1 - show
+         * @hide
+         */
+        public static final String STATUS_BAR_FORCE_CLOCK_LOCKSCREEN = "status_bar_force_clock_lockscreen";
+
+        /**
          * AM/PM Style for clock options
          * 0 - Normal AM/PM
          * 1 - Small AM/PM
@@ -5337,7 +5324,13 @@ public final class Settings {
          */
         public static final String GESTURE_THREE = "gesture_three";
 
-         /**
+        /**
+         * Force expanded notifications on all apps that support it.
+         * @hide
+         */
+        public static final String FORCE_EXPANDED_NOTIFICATIONS = "force_expanded_notifications";
+
+        /**         
          * Action for long-pressing back button on lock screen
          * @hide
          */
