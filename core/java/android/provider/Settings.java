@@ -4870,16 +4870,16 @@ public final class Settings {
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
 	/**
+	 * Hides carrier label in keyguard
+	 * @hide
+	 */
+	public static final String NO_CARRIER_LABEL = "no_carrier_label";
+
+	/**
 	 * Carrier Logo toggle
 	 * @hide
 	 */
 	public static final String TOGGLE_CARRIER_LOGO = "toggle_carrier_logo";
-	
-	/**
-	 * Hides carrier label in keyguard
-	 * @hide
-	 */
-	public static final String NO_CARRIER_LABEL = "no_carrier_label";	
 
        /**
         * Sets the portrait background of notification drawer
