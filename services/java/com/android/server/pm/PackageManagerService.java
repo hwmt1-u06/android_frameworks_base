@@ -36,6 +36,7 @@ import android.Manifest;
 import android.app.ComposedIconInfo;
 import android.content.res.AssetManager;
 import android.content.res.ThemeConfig;
+import android.content.res.ThemeManager;
 import android.util.Pair;
 import com.android.internal.app.IMediaContainerService;
 import com.android.internal.app.ResolverActivity;
