@@ -32,9 +32,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.systemui.R;
+import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.SignalText;
-import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
 public class SignalClusterView
@@ -52,9 +52,9 @@ public class SignalClusterView
     private int mMobileStrengthId = 0, mMobileActivityId = 0, mMobileTypeId = 0;
     private boolean mIsAirplaneMode = false;
     private int mAirplaneIconId = 0;
-    private int mCarrierIconId = -1;
     private String mWifiDescription, mMobileDescription, mMobileTypeDescription;
 
+    private int mCarrierIconId = -1;
     private boolean mShowSignalText = false;
 
     private PhoneStatusBar mStatusBar;
@@ -76,7 +76,7 @@ public class SignalClusterView
         super(context, attrs, defStyle);
     }
 
-    public void setStatusBar(PhoneStatusBar phoneStatusBar) {
+    public void setStatusBarCarrier(PhoneStatusBar phoneStatusBar) {
         mStatusBar = phoneStatusBar;
     }
 
@@ -196,7 +196,7 @@ public class SignalClusterView
             mMobileType.setImageDrawable(null);
         }
 
-        if(mAirplane != null) {
+        if (mAirplane != null) {
             mAirplane.setImageDrawable(null);
         }
 

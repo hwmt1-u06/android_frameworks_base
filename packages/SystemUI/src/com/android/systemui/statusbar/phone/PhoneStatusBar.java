@@ -397,13 +397,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private StatusHeaderMachine mStatusHeaderMachine;
     private Runnable mStatusHeaderUpdater;
-    private ImageView mCarrierLogo;
-    private boolean mCarrierLogoEnabled = false;
 
     // last theme that was applied in order to detect theme change (as opposed
     // to some other configuration change).
     ThemeConfig mCurrentTheme;
     private boolean mRecreating = false;
+
+    private ImageView mCarrierLogo;
+    private boolean mCarrierLogoEnabled = false;
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -611,8 +612,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.TOGGLE_CARRIER_LOGO), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(					
                     Settings.System.QS_QUICK_ACCESS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -621,9 +620,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QUICK_SETTINGS_RIBBON_TILES),
                     false, this, UserHandle.USER_ALL);
-	    mForceShowClockOnLockscreen = Settings.System.getIntForUser(
-                    resolver, Settings.System.STATUS_BAR_FORCE_CLOCK_LOCKSCREEN, 0
-                    , UserHandle.USER_CURRENT) == 1;
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.TOGGLE_CARRIER_LOGO),
+                    false, this);
             update();
         }
 
@@ -852,6 +851,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationShortcutsIsActive = !(notificationShortcutsIsActive == null
                     || notificationShortcutsIsActive.isEmpty());
 
+	    mCarrierLogoEnabled = Settings.System.getIntForUser(
+            	    resolver, Settings.System.TOGGLE_CARRIER_LOGO, 0,
+           	    UserHandle.USER_CURRENT) == 1;
+
+	    mForceShowClockOnLockscreen = Settings.System.getIntForUser(
+                    resolver, Settings.System.STATUS_BAR_FORCE_CLOCK_LOCKSCREEN, 0
+                    , UserHandle.USER_CURRENT) == 1;
+
             if (mCarrierLabel != null) {
                 mHideLabels = Settings.System.getIntForUser(resolver,
                         Settings.System.NOTIFICATION_HIDE_LABELS, 0, UserHandle.USER_CURRENT);
@@ -861,6 +868,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             updateBatteryIcons();
 	    updateCustomHeaderStatus();
+            setCarrierVisibility();
 
             mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.REMINDER_ALERT_INTERVAL, 1500, UserHandle.USER_CURRENT);
@@ -881,12 +889,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 enableOrDisableReminder();
             }
-
-        mCarrierLogoEnabled = Settings.System.getIntForUser(
-                resolver, Settings.System.TOGGLE_CARRIER_LOGO, 0
-                , UserHandle.USER_CURRENT) == 1;
-        setCarrierVisibility();
-        updateCustomHeaderStatus();		
         }
     }
 
@@ -1492,7 +1494,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNetworkController.addSignalCluster(signalCluster);
         mNetworkController.addCarrierCluster(signalCluster);
         signalCluster.setNetworkController(mNetworkController);
-        signalCluster.setStatusBar(this);
+        signalCluster.setStatusBarCarrier(this);
 
         final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
         if (isAPhone) {
