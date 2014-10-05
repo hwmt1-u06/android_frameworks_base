@@ -106,10 +106,15 @@ public class CarrierText extends TextView {
 	    } else {
                 setText(customLabel);
 	    }
+        String customCarrierLabel = Settings.System.getStringForUser(getContext().getContentResolver(),
+                Settings.System.NOTIFICATION_CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
+        if (!TextUtils.isEmpty(customCarrierLabel)) {
+            setText(customCarrierLabel);
         } else {
-            setText("");
+            setText(getCarrierTextForSimState(simState, plmn, spn));
         }
-    }
+		}
+	}
 
     @Override
     protected void onFinishInflate() {

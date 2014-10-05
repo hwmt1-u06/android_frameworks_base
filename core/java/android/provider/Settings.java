@@ -5667,6 +5667,31 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_EXCLUDE_FROM_LOCK_SCREEN = "heads_up_exclude_from_lock_screen";
+		
+        /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String NOTIFICATION_CUSTOM_CARRIER_LABEL = "notification_custom_carrier_label";		
+		
+		/**
+		 * Show the pending notification counts as overlays on the status bar
+		 * @hide
+		 */
+		public static final String STATUS_BAR_NOTIFICATION_COUNT = "status_bar_notification_count";		
+		
+        /**
+         * Carrier Label Custom Color
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
+
+        /**
+         * show carrier in statusbar. The value is
+         * boolean (1 or 0).
+         */
+        public static final String STATUS_BAR_CARRIER = "status_bar_carrier";		
 
         /**
          * On or off the PA Pie.
