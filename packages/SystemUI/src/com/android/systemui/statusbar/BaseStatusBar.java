@@ -1162,6 +1162,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             cRecents.closeRecents();
         else
             mRecents.closeRecents();
+            }
         }
     }
 
