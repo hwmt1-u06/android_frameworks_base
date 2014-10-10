@@ -17,7 +17,6 @@
 
 package com.android.server.power;
 
-import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -71,11 +70,8 @@ public final class ShutdownThread extends Thread {
 
     private static boolean mReboot;
     private static boolean mRebootSafeMode;
-    private static boolean mRebootSoft;
     private static String mRebootReason;
     private static boolean mRebootHot = false;
-
-    public static final String SOFT_REBOOT = "soft_reboot";	
 
     // Provides shutdown assurance in case the system_server is killed
     public static final String SHUTDOWN_ACTION_PROPERTY = "sys.shutdown.requested";
@@ -151,34 +147,15 @@ public final class ShutdownThread extends Thread {
                                 String actions[] = context.getResources().getStringArray(
                                         com.android.internal.R.array.shutdown_reboot_actions);
 
-                                    if (actions != null && which < actions.length) {
-                                        mRebootReason = actions[which];
-                                        mRebootSoft = actions[which].equals(SOFT_REBOOT);
-                                    }
+                                if (actions != null && which < actions.length)
+                                    mRebootReason = actions[which];
 
                                 mReboot = true;
   				   if (mRebootReason != null && mRebootReason.equals("hot")) {
                                         mRebootHot = true;
                                     }
                                 beginShutdownSequence(context);
-	
-                                    if (mRebootSoft) {
-                                        mRebootSoft = false;
-                                        try {
-                                            final IActivityManager am = ActivityManagerNative
-                                                    .asInterface(ServiceManager.checkService(
-                                                            Context.ACTIVITY_SERVICE));
-                                            if (am != null) {
-                                                am.restart();
-                                            }
-                                        } catch (RemoteException e) {
-                                            Log.e(TAG, "failure trying to perform soft reboot", e);
-                                        }
-                                    } else {
-                                        mReboot = true;
-                                        beginShutdownSequence(context);
-                                    }
-                                }							
+                            }
                         })
                         .create();
                         sConfirmDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -186,7 +163,6 @@ public final class ShutdownThread extends Thread {
                                     int keyCode, KeyEvent event) {
                                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                                     mReboot = false;
-                                        mRebootSoft = false;
                                     dialog.cancel();
                                 }
                                 return true;

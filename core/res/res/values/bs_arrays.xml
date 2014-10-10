@@ -4,7 +4,6 @@
 
     <array name="shutdown_reboot_options" translatable="false">
         <item>@string/reboot_reboot</item>
-        <item>@string/reboot_soft</item>	
         <item>@string/reboot_recovery</item>
         <item>@string/reboot_bootloader</item>
 	<item>@string/reboot_hot</item>
