@@ -682,7 +682,6 @@ public class ThemeService extends IThemeService.Stub {
                 if (newConfig.equals(config.themeConfig)) {
                     // We can't just use null for the themeConfig, it won't be registered as
                     // a changed config value because of the way equals in config had to be written.
-
                     final String defaultThemePkg =
                             Settings.Secure.getString(mContext.getContentResolver(),
                             Settings.Secure.DEFAULT_THEME_PACKAGE);
@@ -691,6 +690,7 @@ public class ThemeService extends IThemeService.Stub {
                     config.themeConfig = defaultBuilder.build();
                     am.updateConfiguration(config);
                 }
+
                 config.themeConfig = newConfig;
                 am.updateConfiguration(config);
             } catch (RemoteException e) {
@@ -720,16 +720,6 @@ public class ThemeService extends IThemeService.Stub {
             builder.defaultFont(pkgName == null ?
                     componentMap.get(ThemesColumns.MODIFIES_FONTS) : pkgName);
         }
-
-        if (componentMap.containsKey(ThemesColumns.MODIFIES_STATUS_BAR)) {
-            builder.overlay("com.android.systemui", pkgName == null ?
-                    componentMap.get(ThemesColumns.MODIFIES_STATUS_BAR) : pkgName);
-        }
-
-        /* if (componentMap.containsKey(ThemesColumns.MODIFIES_NAVIGATION_BAR)) {
-            builder.overlay(ThemeConfig.SYSTEMUI_NAVBAR_PKG, pkgName == null ?
-                    componentMap.get(ThemesColumns.MODIFIES_NAVIGATION_BAR) : pkgName);
-        } */
 
         return builder;
     }
@@ -878,8 +868,6 @@ public class ThemeService extends IThemeService.Stub {
         synchronized (mThemesToProcessQueue) {
             for (Object key : componentMap.keySet()) {
                 if (ThemesColumns.MODIFIES_OVERLAYS.equals(key) ||
-                        ThemesColumns.MODIFIES_NAVIGATION_BAR.equals(key) ||
-                        ThemesColumns.MODIFIES_STATUS_BAR.equals(key) ||
                         ThemesColumns.MODIFIES_ICONS.equals(key)) {
                     String pkgName = (String) componentMap.get(key);
                     if (mThemesToProcessQueue.indexOf(pkgName) > 0) {
