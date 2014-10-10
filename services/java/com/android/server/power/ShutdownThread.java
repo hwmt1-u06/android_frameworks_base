@@ -71,7 +71,7 @@ public final class ShutdownThread extends Thread {
     private static boolean mReboot;
     private static boolean mRebootSafeMode;
     private static String mRebootReason;
-    private static boolean mRebootHot = false;
+    private static boolean mRebootSoft = false;
 
     // Provides shutdown assurance in case the system_server is killed
     public static final String SHUTDOWN_ACTION_PROPERTY = "sys.shutdown.requested";
@@ -151,8 +151,8 @@ public final class ShutdownThread extends Thread {
                                     mRebootReason = actions[which];
 
                                 mReboot = true;
-  				   if (mRebootReason != null && mRebootReason.equals("hot")) {
-                                        mRebootHot = true;
+  				   if (mRebootReason != null && mRebootReason.equals("soft")) {
+                                        mRebootSoft = true;
                                     }
                                 beginShutdownSequence(context);
                             }
@@ -323,7 +323,7 @@ public final class ShutdownThread extends Thread {
             }
         };
 
-        if (!mRebootHot) {
+        if (!mRebootSoft) {
             /*
              * Write a system property in case the system_server reboots before we
              * get to the actual hardware restart. If that happens, we'll retry at
@@ -544,14 +544,14 @@ public final class ShutdownThread extends Thread {
         if (reboot) {
             Log.i(TAG, "Rebooting, reason: " + reason);
             // check if hot reboot requested
-            if (mRebootHot) {
+            if (mRebootSoft) {
                 // crash system server to restart Android framework
                 try {
                     IBinder b = ServiceManager.getService(Context.POWER_SERVICE);
                     IPowerManager pm = IPowerManager.Stub.asInterface(b);
-                    pm.crash("Crashed by Hot Reboot");
+                    pm.crash("Crashed by Soft Reboot");
                 } catch (RemoteException e) {
-                    Log.e(TAG, "Hot reboot failed, will attempt normal reboot instead", e);
+                    Log.e(TAG, "Soft reboot failed, will attempt normal reboot instead", e);
                     reason = null;
                 }
             }

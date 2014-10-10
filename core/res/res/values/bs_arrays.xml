@@ -6,7 +6,7 @@
         <item>@string/reboot_reboot</item>
         <item>@string/reboot_recovery</item>
         <item>@string/reboot_bootloader</item>
-	<item>@string/reboot_hot</item>
+	<item>@string/reboot_soft</item>
     </array>
 
     <!-- Do not translate. Defines the shutdown actions passed to the kernel.
@@ -15,7 +15,7 @@
         <item></item>
         <item>recovery</item>
         <item>bootloader</item>
-	<item>hot</item>
+	<item>soft</item>
     </string-array>
 
     <!-- Do not translate. Defines the mapping of notification package names
