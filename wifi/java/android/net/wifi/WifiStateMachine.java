@@ -110,6 +110,7 @@ import java.util.regex.Pattern;
  */
 public class WifiStateMachine extends StateMachine {
 
+    private static final String TAG = "WifiStateMachine";
     private static final String NETWORKTYPE = "WIFI";
     private static final boolean DBG = false;
 
@@ -150,6 +151,7 @@ public class WifiStateMachine extends StateMachine {
     private int mLastNetworkId;
     private boolean mEnableRssiPolling = false;
     private boolean mEnableBackgroundScan = false;
+    private boolean mDisabled5GhzFrequencies = false;
     private int mRssiPollToken = 0;
     private int mReconnectCount = 0;
     /* 3 operational states for STA operation: CONNECT_MODE, SCAN_ONLY_MODE, SCAN_ONLY_WIFI_OFF_MODE
@@ -1721,7 +1723,12 @@ public class WifiStateMachine extends StateMachine {
             enableBackgroundScanCommand(screenOn == false);
         }
 
-        if (screenOn) enableAllNetworks();
+        // While wps is running, DO NOT enabled all networks
+        // to prevent auto-connect to other APs.
+        if (screenOn && (getCurrentState() != mWpsRunningState)) {
+            enableAllNetworks();
+        }
+
         if (mUserWantsSuspendOpt.get()) {
             if (screenOn) {
                 sendMessage(CMD_SET_SUSPEND_OPT_ENABLED, 0, 0);
@@ -2340,6 +2347,15 @@ public class WifiStateMachine extends StateMachine {
     private void handleNetworkDisconnect() {
         if (DBG) log("Stopping DHCP and clearing IP");
 
+        // when set wifi connection type is manual, it will disable all
+        // network to auto connect. but if connect a hotspot manually,
+        // the hotspot will be enable and it will be auto connect in next time
+        // so need to disable it again to avoid to auto connect.
+        if (mContext.getResources().getBoolean(R.bool.wifi_autocon)
+                && !mWifiConfigStore.shouldAutoConnect()) {
+            disableLastNetwork();
+        }
+
         stopDhcp();
 
         try {
@@ -2385,27 +2401,6 @@ public class WifiStateMachine extends StateMachine {
 
     void handlePreDhcpSetup() {
         mDhcpActive = true;
-        if (!mBluetoothConnectionActive) {
-            /*
-             * There are problems setting the Wi-Fi driver's power
-             * mode to active when bluetooth coexistence mode is
-             * enabled or sense.
-             * <p>
-             * We set Wi-Fi to active mode when
-             * obtaining an IP address because we've found
-             * compatibility issues with some routers with low power
-             * mode.
-             * <p>
-             * In order for this active power mode to properly be set,
-             * we disable coexistence mode until we're done with
-             * obtaining an IP address.  One exception is if we
-             * are currently connected to a headset, since disabling
-             * coexistence would interrupt that connection.
-             */
-            // Disable the coexistence mode
-            mWifiNative.setBluetoothCoexistenceMode(
-                    mWifiNative.BLUETOOTH_COEXISTENCE_MODE_DISABLED);
-        }
 
         /* Disable power save and suspend optimizations during DHCP */
         // Note: The order here is important for now. Brcm driver changes
@@ -2413,6 +2408,10 @@ public class WifiStateMachine extends StateMachine {
         // TODO: Remove this comment when the driver is fixed.
         setSuspendOptimizationsNative(SUSPEND_DUE_TO_DHCP, false);
         mWifiNative.setPowerSave(false);
+
+        // Disable the coexistence mode
+        mWifiNative.setBluetoothCoexistenceMode(
+                    mWifiNative.BLUETOOTH_COEXISTENCE_MODE_DISABLED);
 
         stopBatchedScan();
 
@@ -2445,15 +2444,15 @@ public class WifiStateMachine extends StateMachine {
     }
 
     void handlePostDhcpSetup() {
-        /* Restore power save and suspend optimizations */
-        setSuspendOptimizationsNative(SUSPEND_DUE_TO_DHCP, true);
-        mWifiNative.setPowerSave(true);
-
         mWifiP2pChannel.sendMessage(WifiP2pService.BLOCK_DISCOVERY, WifiP2pService.DISABLED);
 
         // Set the coexistence mode back to its default value
         mWifiNative.setBluetoothCoexistenceMode(
                 mWifiNative.BLUETOOTH_COEXISTENCE_MODE_SENSE);
+
+        /* Restore power save and suspend optimizations */
+        setSuspendOptimizationsNative(SUSPEND_DUE_TO_DHCP, true);
+        mWifiNative.setPowerSave(true);
 
         mDhcpActive = false;
 
@@ -2708,6 +2707,8 @@ public class WifiStateMachine extends StateMachine {
                     mTemporarilyDisconnectWifi = (message.arg1 == 1);
                     replyToMessage(message, WifiP2pService.DISCONNECT_WIFI_RESPONSE);
                     break;
+                case WifiP2pService.P2P_MIRACAST_MODE_CHANGED:
+                    break;
                 case CMD_IP_ADDRESS_UPDATED:
                     // addLinkAddress is a no-op if called more than once with the same address.
                     if (mNetlinkLinkProperties.addLinkAddress((LinkAddress) message.obj)) {
@@ -2858,8 +2859,24 @@ public class WifiStateMachine extends StateMachine {
                     mWifiConfigStore.loadAndEnableAllNetworks();
                     initializeWpsDetails();
 
+                    // if don't set auto connect wifi, should disable all
+                    // wifi ap to prevent wifi connect automatically when open
+                    // wifi switch.
+                    if (mContext.getResources().getBoolean(R.bool.wifi_autocon)
+                        && !mWifiConfigStore.shouldAutoConnect()) {
+                        mWifiConfigStore.disableAllNetworks();
+                    }
+
                     mIbssSupported = mWifiNative.getModeCapability("IBSS");
                     mSupportedChannels = mWifiNative.getSupportedChannels();
+
+                    // if don't set auto connect wifi, should disable all
+                    // wifi ap to prevent wifi connect automatically when open
+                    // wifi switch.
+                    if (mContext.getResources().getBoolean(R.bool.wifi_autocon)
+                        && !mWifiConfigStore.shouldAutoConnect()) {
+                        mWifiConfigStore.disableAllNetworks();
+                    }
 
                     sendSupplicantConnectionChangedBroadcast(true);
                     transitionTo(mDriverStartedState);
@@ -3224,6 +3241,14 @@ public class WifiStateMachine extends StateMachine {
                         mFrequencyBand.set(band);
                         // flush old data - like scan results
                         mWifiNative.bssFlush();
+                        if (mFrequencyBand.get() == WifiManager.WIFI_FREQUENCY_BAND_2GHZ) {
+                            mWifiNative.disable5GHzFrequencies(true);
+                            mDisabled5GhzFrequencies = true;
+                        } else if ((mFrequencyBand.get() != WifiManager.WIFI_FREQUENCY_BAND_2GHZ)
+                                && (mDisabled5GhzFrequencies)) {
+                            mWifiNative.disable5GHzFrequencies(false);
+                            mDisabled5GhzFrequencies = false;
+                        }
                         //Fetch the latest scan results when frequency band is set
                         startScanNative(WifiNative.SCAN_WITH_CONNECTION_SETUP);
                     } else {
@@ -4218,6 +4243,9 @@ public class WifiStateMachine extends StateMachine {
                         ret = NOT_HANDLED;
                     }
                     break;
+                case WifiP2pService.P2P_MIRACAST_MODE_CHANGED:
+                     setScanIntevelOnMiracastModeChange(message.arg1);
+                     break;
                 default:
                     ret = NOT_HANDLED;
             }
@@ -4574,5 +4602,26 @@ public class WifiStateMachine extends StateMachine {
         Message msg = Message.obtain();
         msg.arg2 = srcMsg.arg2;
         return msg;
+    }
+
+    void disableLastNetwork() {
+        if (getCurrentState() != mSupplicantStoppingState) {
+            mWifiConfigStore.disableNetwork(mLastNetworkId,
+                    WifiConfiguration.DISABLED_UNKNOWN_REASON);
+        }
+    }
+
+    private void setScanIntevelOnMiracastModeChange(int mode) {
+        if ((mode == WifiP2pManager.MIRACAST_SOURCE)
+                || (mode == WifiP2pManager.MIRACAST_SINK)) {
+            int defaultWfdIntervel = mContext.getResources().getInteger(
+                    R.integer.config_wifi_scan_interval_wfd_connected);
+            long wfdScanIntervalMs = Settings.Global
+                    .getLong(
+                            mContext.getContentResolver(),
+                            Settings.Global.WIFI_SUPPLICANT_SCAN_INTERVAL_WFD_CONNECTED_MS,
+                            defaultWfdIntervel);
+            mWifiNative.setScanInterval((int) wfdScanIntervalMs / 1000);
+        }
     }
 }
