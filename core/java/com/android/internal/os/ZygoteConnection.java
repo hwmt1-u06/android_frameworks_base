@@ -76,8 +76,6 @@ class ZygoteConnection {
     private final Credentials peer;
     private final String peerSecurityContext;
 
-    private static final int GC_LOOP_COUNT = 10;
-
     /**
      * Constructs instance from connected socket.
      *
@@ -94,7 +92,7 @@ class ZygoteConnection {
                 new InputStreamReader(socket.getInputStream()), 256);
 
         mSocket.setSoTimeout(CONNECTION_TIMEOUT_MILLIS);
-                
+
         try {
             peer = mSocket.getPeerCredentials();
         } catch (IOException ex) {
@@ -126,7 +124,7 @@ class ZygoteConnection {
      */
     void run() throws ZygoteInit.MethodAndArgsCaller {
 
-        int loopCount = GC_LOOP_COUNT;
+        int loopCount = ZygoteInit.GC_LOOP_COUNT;
 
         while (true) {
             /*
@@ -139,8 +137,8 @@ class ZygoteConnection {
              * heap is a lot of overhead to free a few hundred bytes.
              */
             if (loopCount <= 0) {
-                System.gc();
-                loopCount = GC_LOOP_COUNT;
+                ZygoteInit.gc();
+                loopCount = ZygoteInit.GC_LOOP_COUNT;
             } else {
                 loopCount--;
             }
@@ -223,11 +221,6 @@ class ZygoteConnection {
                 ZygoteInit.setCloseOnExec(serverPipeFd, true);
             }
 
-            //Replace the font cache if the theme changed
-            if (parsedArgs.refreshTheme) {
-                Typeface.recreateDefaults();
-            }
-
             /**
              * In order to avoid leaking descriptors to the Zygote child,
              * the native code must close the two Zygote socket descriptors
@@ -255,6 +248,17 @@ class ZygoteConnection {
             }
 
             fd = null;
+
+            /**
+             *
+             * Needed, but present also in this commit:
+             * https://github.com/CyanogenMod/android_frameworks_base/commit/fc2fb1d5eb55b41477eabd75dbef3964be145732
+             *
+             */
+            //Replace the font cache if the theme changed
+            if (parsedArgs.refreshTheme) {
+                Typeface.recreateDefaults();
+            }
 
             pid = Zygote.forkAndSpecialize(parsedArgs.uid, parsedArgs.gid, parsedArgs.gids,
                     parsedArgs.debugFlags, rlimits, parsedArgs.mountExternal, parsedArgs.seInfo,
@@ -601,7 +605,7 @@ class ZygoteConnection {
         }
 
         // See bug 1092107: large argc can be used for a DOS attack
-        if (argc > MAX_ZYGOTE_ARGC) {   
+        if (argc > MAX_ZYGOTE_ARGC) {
             throw new IOException("max arg count exceeded");
         }
 
@@ -618,7 +622,7 @@ class ZygoteConnection {
     }
 
     /**
-     * Applies zygote security policy per bugs #875058 and #1082165. 
+     * Applies zygote security policy per bugs #875058 and #1082165.
      * Based on the credentials of the process issuing a zygote command:
      * <ol>
      * <li> uid 0 (root) may specify any uid, gid, and setgroups() list
@@ -649,7 +653,7 @@ class ZygoteConnection {
             /* In normal operation, SYSTEM_UID can only specify a restricted
              * set of UIDs. In factory test mode, SYSTEM_UID may specify any uid.
              */
-            uidRestricted  
+            uidRestricted
                  = !(factoryTest.equals("1") || factoryTest.equals("2"));
 
             if (uidRestricted
@@ -844,7 +848,7 @@ class ZygoteConnection {
     }
 
     /**
-     * Applies zygote security policy for SELinux information.
+     * Applies zygote security policy for SEAndroid information.
      *
      * @param args non-null; zygote spawner arguments
      * @param peer non-null; peer credentials
@@ -863,7 +867,7 @@ class ZygoteConnection {
         if (!(peerUid == 0 || peerUid == Process.SYSTEM_UID)) {
             // All peers with UID other than root or SYSTEM_UID
             throw new ZygoteSecurityException(
-                    "This UID may not specify SELinux info.");
+                    "This UID may not specify SEAndroid info.");
         }
 
         boolean allowed = SELinux.checkSELinuxAccess(peerSecurityContext,
@@ -872,7 +876,7 @@ class ZygoteConnection {
                                                      "specifyseinfo");
         if (!allowed) {
             throw new ZygoteSecurityException(
-                    "Peer may not specify SELinux info");
+                    "Peer may not specify SEAndroid info");
         }
 
         return;
@@ -1014,16 +1018,18 @@ class ZygoteConnection {
 
         boolean usingWrapper = false;
         if (pipeFd != null && pid > 0) {
-            DataInputStream is = new DataInputStream(new FileInputStream(pipeFd));
+            DataInputStream is = null;
             int innerPid = -1;
             try {
+                is = new DataInputStream(new FileInputStream(pipeFd));
                 innerPid = is.readInt();
             } catch (IOException ex) {
                 Log.w(TAG, "Error reading pid from wrapped process, child may have died", ex);
             } finally {
-                try {
-                    is.close();
-                } catch (IOException ex) {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {}
                 }
             }
 

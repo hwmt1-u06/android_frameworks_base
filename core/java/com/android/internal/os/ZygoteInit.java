@@ -71,7 +71,7 @@ public class ZygoteInit {
     private static final int LOG_BOOT_PROGRESS_PRELOAD_END = 3030;
 
     /** when preloading, GC after allocating this many bytes */
-    private static final int PRELOAD_GC_THRESHOLD = 5000000;
+    private static final int PRELOAD_GC_THRESHOLD = 1000000;
 
     public static final String USAGE_STRING =
             " <\"start-system-server\"|\"\" for startSystemServer>";
@@ -83,6 +83,12 @@ public class ZygoteInit {
      * never gets destroyed.
      */
     private static Resources mResources;
+
+    /**
+     * The number of times that the main Zygote loop
+     * should run before calling gc() again.
+     */
+    static final int GC_LOOP_COUNT = 15;
 
     /**
      * The name of a resource file that contains classes to preload.
@@ -276,6 +282,11 @@ public class ZygoteInit {
             float defaultUtilization = runtime.getTargetHeapUtilization();
             runtime.setTargetHeapUtilization(0.8f);
 
+            // Start with a clean slate.
+            System.gc();
+            runtime.runFinalizationSync();
+            Debug.startAllocCounting();
+
             try {
                 BufferedReader br
                     = new BufferedReader(new InputStreamReader(is), 256);
@@ -294,6 +305,15 @@ public class ZygoteInit {
                             Log.v(TAG, "Preloading " + line + "...");
                         }
                         Class.forName(line);
+                        if (Debug.getGlobalAllocSize() > PRELOAD_GC_THRESHOLD) {
+                            if (false) {
+                                Log.v(TAG,
+                                    " GC at " + Debug.getGlobalAllocSize());
+                            }
+                            System.gc();
+                            runtime.runFinalizationSync();
+                            Debug.resetGlobalAllocSize();
+                        }
                         count++;
                     } catch (ClassNotFoundException e) {
                         Log.w(TAG, "Class not found for preloading: " + line);
@@ -323,6 +343,8 @@ public class ZygoteInit {
                 // Fill in dex caches with classes, fields, and methods brought in by preloading.
                 runtime.preloadDexCaches();
 
+                Debug.stopAllocCounting();
+
                 // Bring back root. We'll need it later.
                 setEffectiveUser(ROOT_UID);
                 setEffectiveGroup(ROOT_GID);
@@ -340,7 +362,10 @@ public class ZygoteInit {
     private static void preloadResources() {
         final VMRuntime runtime = VMRuntime.getRuntime();
 
+        Debug.startAllocCounting();
         try {
+            System.gc();
+            runtime.runFinalizationSync();
             mResources = Resources.getSystem();
             mResources.startPreloading();
             if (PRELOAD_RESOURCES) {
@@ -365,12 +390,22 @@ public class ZygoteInit {
             mResources.finishPreloading();
         } catch (RuntimeException e) {
             Log.w(TAG, "Failure preloading resources", e);
+        } finally {
+            Debug.stopAllocCounting();
         }
     }
 
     private static int preloadColorStateLists(VMRuntime runtime, TypedArray ar) {
         int N = ar.length();
         for (int i=0; i<N; i++) {
+            if (Debug.getGlobalAllocSize() > PRELOAD_GC_THRESHOLD) {
+                if (false) {
+                    Log.v(TAG, " GC at " + Debug.getGlobalAllocSize());
+                }
+                System.gc();
+                runtime.runFinalizationSync();
+                Debug.resetGlobalAllocSize();
+            }
             int id = ar.getResourceId(i, 0);
             if (false) {
                 Log.v(TAG, "Preloading resource #" + Integer.toHexString(id));
@@ -391,6 +426,14 @@ public class ZygoteInit {
     private static int preloadDrawables(VMRuntime runtime, TypedArray ar) {
         int N = ar.length();
         for (int i=0; i<N; i++) {
+            if (Debug.getGlobalAllocSize() > PRELOAD_GC_THRESHOLD) {
+                if (false) {
+                    Log.v(TAG, " GC at " + Debug.getGlobalAllocSize());
+                }
+                System.gc();
+                runtime.runFinalizationSync();
+                Debug.resetGlobalAllocSize();
+            }
             int id = ar.getResourceId(i, 0);
             if (false) {
                 Log.v(TAG, "Preloading resource #" + Integer.toHexString(id));
@@ -412,7 +455,7 @@ public class ZygoteInit {
      * softly- and final-reachable objects, along with any other garbage.
      * This is only useful just before a fork().
      */
-    /*package*/ static void gcAndFinalize() {
+    /*package*/ static void gc() {
         final VMRuntime runtime = VMRuntime.getRuntime();
 
         /* runFinalizationSync() lets finalizers be called in Zygote,
@@ -421,6 +464,9 @@ public class ZygoteInit {
         System.gc();
         runtime.runFinalizationSync();
         System.gc();
+        runtime.runFinalizationSync();
+        System.gc();
+        runtime.runFinalizationSync();
     }
 
     /**
@@ -540,7 +586,7 @@ public class ZygoteInit {
             SamplingProfilerIntegration.writeZygoteSnapshot();
 
             // Do an initial gc to clean up after startup
-            gcAndFinalize();
+            gc();
 
             // Disable tracing so that forked processes do not inherit stale tracing tags from
             // Zygote.
@@ -587,8 +633,26 @@ public class ZygoteInit {
         fds.add(sServerSocket.getFileDescriptor());
         peers.add(null);
 
+        int loopCount = GC_LOOP_COUNT;
         while (true) {
             int index;
+
+            /*
+             * Call gc() before we block in select().
+             * It's work that has to be done anyway, and it's better
+             * to avoid making every child do it.  It will also
+             * madvise() any free memory as a side-effect.
+             *
+             * Don't call it every time, because walking the entire
+             * heap is a lot of overhead to free a few hundred bytes.
+             */
+            if (loopCount <= 0) {
+                gc();
+                loopCount = GC_LOOP_COUNT;
+            } else {
+                loopCount--;
+            }
+
 
             try {
                 fdArray = fds.toArray(fdArray);
