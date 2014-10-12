@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
@@ -73,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // database gets upgraded properly. At a minimum, please confirm that 'upgradeVersion'
     // is properly propagated through your change.  Not doing so will result in a loss of user
     // settings.
-    private static final int DATABASE_VERSION = 102;
+    private static final int DATABASE_VERSION = 103;
 
     private Context mContext;
     private int mUserHandle;
@@ -1600,6 +1601,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             upgradeVersion = 102;
         }
+				
+        if (upgradeVersion == 102) {
+            if (mUserHandle == UserHandle.USER_OWNER) {
+                loadQuickBootSetting(db);
+            }
+            upgradeVersion = 103;
+        }		
 
         // *** Remember to update DATABASE_VERSION above!
 
@@ -2006,6 +2014,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void loadQuickBootSetting(SQLiteDatabase db) {
+        boolean qbEnabled = true;
+        final PackageManager pm = mContext.getPackageManager();
+        try {
+            pm.getPackageInfo("com.qapp.quickboot", PackageManager.GET_META_DATA);
+        } catch (NameNotFoundException e) {
+            qbEnabled = false;
+        }
+        db.beginTransaction();
+        SQLiteStatement stmt = null;
+        try {
+            stmt = db.compileStatement("INSERT OR REPLACE INTO global(name,value)"
+                    + " VALUES(?,?);");
+            loadSetting(stmt, Settings.Global.ENABLE_QUICKBOOT, qbEnabled ? 1 : 0);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            if (stmt != null) stmt.close();
+        }
+    }
+
     private void loadSettings(SQLiteDatabase db) {
         loadSystemSettings(db);
         loadSecureSettings(db);
@@ -2372,6 +2401,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     R.integer.def_send_action_app_error);
 
             // --- New global settings start here
+            loadQuickBootSetting(db);
+
         } finally {
             if (stmt != null) stmt.close();
         }
