@@ -380,6 +380,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // ticker
     private View mTickerView;
     private boolean mTicking;
+    private boolean mTickerDisabled;
 
     // Tracking finger for opening/closing.
     int mEdgeBorder; // corresponds to R.dimen.status_bar_edge_ignore
@@ -616,6 +617,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+<<<<<<< HEAD
                     Settings.System.QS_QUICK_ACCESS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -631,6 +633,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CARRIER), false, this,
                     UserHandle.USER_ALL);					
             update();
+=======
+                    Settings.System.STATUS_BAR_CARRIER), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.TICKER_DISABLED), false, this);
+            updateSettings();
+>>>>>>> 7a62add... Disable ticker preference [1/2]
         }
 
         @Override
@@ -900,6 +908,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mShowStatusBarCarrier = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
                     showStatusBarCarrierLabel(mShowStatusBarCarrier);
+                    
+            mTickerDisabled = Settings.System.getInt(
+                    resolver, Settings.System.TICKER_DISABLED, 0) == 1;        
         }
     }
 
@@ -1490,6 +1501,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
 
+        mTickerDisabled = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.TICKER_DISABLED, 0) == 1;
         mTicker = new MyTicker(context, mStatusBarView);
 
         TickerView tickerView = (TickerView)mStatusBarView.findViewById(R.id.tickerText);
@@ -3864,6 +3877,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // not for you
         if (!notificationIsForCurrentUser(n)) return;
+
+        // just.. no
+        if (mTickerDisabled) return;
 
         // Show the ticker if one is requested. Also don't do this
         // until status bar window is attached to the window manager,

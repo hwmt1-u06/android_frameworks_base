@@ -5512,6 +5512,13 @@ public final class Settings {
          */
         public static final String TELO_RADIO_2G_SCREENOFF = "telo_radio_2g_screenoff";
 
+       /**
+        * Disable the statusbar ticker
+        * Default is enabled
+        * @hide
+        */
+        public static final String TICKER_DISABLED = "ticker_disabled";
+
         /**
          * TeloRadio time to change 2g when screenoff
          * @hide
