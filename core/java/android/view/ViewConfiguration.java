@@ -838,6 +838,14 @@ public class ViewConfiguration {
 */
     public boolean hasPermanentMenuKey() {
         return sHasPermanentMenuKey;
+        // Check if hw keys are on to set overflow menu button
+        boolean mHasHwKeysEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.HW_KEYS_ENABLED, 0) == 1;
+
+        try {
+            if (!mHasHwKeysEnabled) {
+                return false;
+            }
     }
 
     /**

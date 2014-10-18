@@ -290,6 +290,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mStatusBarHeight;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
+    boolean mHasHwKeysEnabled;
     boolean mOverWriteHasNavigationBar = false;
     boolean mCanHideNavigationBar = false;
     boolean mNavigationBarCanMove = false; // can the navigation bar ever move to the side?
@@ -2607,6 +2608,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // it handle it, because that gives us the correct 5 second
         // timeout.
         if (keyCode == KeyEvent.KEYCODE_HOME) {
+<<<<<<< HEAD
+=======
+            // Disable home key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring Home Key: we have navbar on");
+                return 0;
+            }
+>>>>>>> 4f0ee1a... [Base] Ability to turn HW keys on/off on supported devices (1/2)
 
             // If we have released the home key, and didn't do anything else
             // while it was pressed, then it is time to go home!
@@ -2712,6 +2721,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            // Disable menu key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring Menu Key: we have navbar on");
+                return 0;
+            }
+
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
@@ -2770,6 +2785,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+            // Disable search key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring Search Key: we have navbar on");
+                return 0;
+            }
             if (down) {
                 if (repeatCount == 0) {
                     mSearchKeyShortcutPending = true;
@@ -2784,6 +2804,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+            // Disable app switch key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring App Switch Key: we have navbar on");
+                return 0;
+            }
             if (down) {
                 if (!mPreloadedRecentApps && (mPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH ||
                         mLongPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH)) {
@@ -2815,6 +2840,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_ASSIST) {
+            // Disable assist key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring Assist Key: we have navbar on");
+                return 0;
+            }
             if (down) {
                 if (!mPreloadedRecentApps && (mPressOnAssistBehavior == KEY_ACTION_APP_SWITCH ||
                         mLongPressOnAssistBehavior == KEY_ACTION_APP_SWITCH)) {
@@ -2846,6 +2876,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Disable back key if navbar is set to on
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
+                Log.i(TAG, "Ignoring Back Key: we have navbar on");
+                return 0;
+            }
             if (Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.KILL_APP_LONGPRESS_BACK, 0, UserHandle.USER_CURRENT) == 1) {
                 if (down && repeatCount == 0) {
@@ -4783,6 +4818,33 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean isWakeKey = (policyFlags
                 & (WindowManagerPolicy.FLAG_WAKE | WindowManagerPolicy.FLAG_WAKE_DROPPED)) != 0;
 
+        if (!hasHwKeysEnabled()) {
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_HOME) {
+                Log.i(TAG, "Ignoring Home Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_MENU) {
+                Log.i(TAG, "Ignoring Menu Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_BACK) {
+                Log.i(TAG, "Ignoring Back Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_SEARCH) {
+                Log.i(TAG, "Ignoring Search Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+                Log.i(TAG, "Ignoring App Switch Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_ASSIST) {
+                Log.i(TAG, "Ignoring Assist Key: we have navbar on");
+                return 0;
+            }
+        }
+
         if (DEBUG_INPUT) {
             Log.d(TAG, "interceptKeyTq keycode=" + keyCode
                     + " screenIsOn=" + isScreenOn + " keyguardActive=" + keyguardActive
@@ -6406,6 +6468,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      */
     private boolean areTranslucentBarsAllowed() {
         return mTranslucentDecorEnabled && !mTouchExplorationEnabled;
+    }
+
+    public boolean hasHwKeysEnabled() {
+        return mHasHwKeysEnabled = Settings.System.getInt(
+                mContext.getContentResolver(),
+                    Settings.System.HW_KEYS_ENABLED, 0) == 1;
     }
 
     // Use this instead of checking config_showNavigationBar so that it can be consistently
