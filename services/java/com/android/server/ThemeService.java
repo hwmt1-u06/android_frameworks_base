@@ -721,6 +721,16 @@ public class ThemeService extends IThemeService.Stub {
                     componentMap.get(ThemesColumns.MODIFIES_FONTS) : pkgName);
         }
 
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_STATUS_BAR)) {
+            builder.overlay("com.android.systemui", pkgName == null ?
+                    componentMap.get(ThemesColumns.MODIFIES_STATUS_BAR) : pkgName);
+        }
+
+        if (componentMap.containsKey(ThemesColumns.MODIFIES_NAVIGATION_BAR)) {
+            builder.overlay(ThemeConfig.SYSTEMUI_NAVBAR_PKG, pkgName == null ?
+                    componentMap.get(ThemesColumns.MODIFIES_NAVIGATION_BAR) : pkgName);
+        }
+
         return builder;
     }
 
@@ -868,6 +878,8 @@ public class ThemeService extends IThemeService.Stub {
         synchronized (mThemesToProcessQueue) {
             for (Object key : componentMap.keySet()) {
                 if (ThemesColumns.MODIFIES_OVERLAYS.equals(key) ||
+                        ThemesColumns.MODIFIES_NAVIGATION_BAR.equals(key) ||
+                        ThemesColumns.MODIFIES_STATUS_BAR.equals(key) ||
                         ThemesColumns.MODIFIES_ICONS.equals(key)) {
                     String pkgName = (String) componentMap.get(key);
                     if (mThemesToProcessQueue.indexOf(pkgName) > 0) {
