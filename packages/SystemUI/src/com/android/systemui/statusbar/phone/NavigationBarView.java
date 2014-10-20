@@ -16,6 +16,9 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
 import android.animation.ObjectAnimator;
@@ -37,6 +40,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -76,6 +80,7 @@ import com.android.systemui.statusbar.policy.KeyButtonView;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +127,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private Drawable mBackIcon, mBackAltIcon;
 
+    private int mPreviousOverrideIconColor = 0;
+    private int mOverrideIconColor = 0;
+
     private Drawable mRecentAltIcon, mRecentAltLandIcon;
 
     boolean mWasNotifsButtonVisible = false;
@@ -155,6 +163,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private boolean mModLockDisabled = true;
     private SettingsObserver mObserver;
+
+    private final int mDSBDuration;
 
     private class NavTransitionListener implements TransitionListener {
         private boolean mBackTransitioning;
@@ -299,6 +309,70 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mObserver = new SettingsObserver(new Handler());
     }
 
+        final String keyguardPackage = mContext.getString(
+                com.android.internal.R.string.config_keyguardPackage);
+        final Bundle keyguardMetadata = getApplicationMetadata(mContext, keyguardPackage);
+        mHasCmKeyguard = keyguardMetadata != null &&
+                keyguardMetadata.getBoolean("com.cyanogenmod.keyguard", false);
+
+        mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
+        BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
+
+            @Override
+            public Animator onUpdateNavigationBarIconColor(final int previousIconColor,
+                    final int iconColor) {
+                mPreviousOverrideIconColor = previousIconColor;
+                mOverrideIconColor = iconColor;
+
+                return generateButtonColorsAnimatorSet();
+            }
+
+        });
+    }
+
+    private AnimatorSet generateButtonColorsAnimatorSet() {
+        final ImageView[] buttons = new ImageView[] {
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_RECENT)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_BACK)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_HOME)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_CONDITIONAL_MENU)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_ALWAYS_MENU)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_MENU_BIG)),
+            (ImageView) getSearchLight(),
+            (ImageView) getCameraButton(),
+            (ImageView) getNotifsButton()
+        };
+
+        final ArrayList<Animator> anims = new ArrayList<Animator>();
+
+        for (final ImageView button : buttons) {
+            if (button != null) {
+                if (mOverrideIconColor == 0) {
+                    mHandler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            button.setColorFilter(null);
+                        }
+
+                    });
+                } else {
+                    anims.add(ObjectAnimator.ofObject(button, "colorFilter",
+                            new ArgbEvaluator(), mPreviousOverrideIconColor,
+                            mOverrideIconColor).setDuration(mDSBDuration));
+                }
+            }
+        }
+
+        if (anims.isEmpty()) {
+            return null;
+        } else {
+            final AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(anims);
+            return animSet;
+        }
+     }
+
     private void watchForDevicePolicyChanges() {
         final IntentFilter filter = new IntentFilter();
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
@@ -387,12 +461,12 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     // for when home is disabled, but search isn't
     public View getSearchLight() {
-        return mCurrentView.findViewById(R.id.search_light);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.search_light);
     }
 
     // shown when keyguard is visible and camera is available
     public View getCameraButton() {
-        return mCurrentView.findViewById(R.id.camera_button);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.camera_button);
     }
 
     public void updateResources() {
@@ -429,7 +503,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     // used for lockscreen notifications
     public View getNotifsButton() {
-        return mCurrentView.findViewById(R.id.show_notifs);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.show_notifs);
     }
 
     private void getIcons(Resources res) {
@@ -1021,6 +1095,16 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mCurrentView = mRotatedViews[Surface.ROTATION_0];
         updateSettings();
 
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final AnimatorSet animSet = generateButtonColorsAnimatorSet();
+                if (animSet != null) {
+                    animSet.start();
+                }
+            }
+        });
+
         watchForAccessibilityChanges();
     }
 
@@ -1127,6 +1211,16 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
 
         setNavigationIconHints(mNavigationIconHints, true);
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final AnimatorSet animSet = generateButtonColorsAnimatorSet();
+                if (animSet != null) {
+                    animSet.start();
+                }
+            }
+        });
     }
 
     @Override
