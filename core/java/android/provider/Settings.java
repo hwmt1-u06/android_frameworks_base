@@ -3981,6 +3981,12 @@ public final class Settings {
          */
         public static final String RECENTS_MEMORY_INDICATOR_LOCATION =
                 "recents_memory_indicator_location";
+				
+        /**
+         * Alternative recent apps integration using OmniSwitch
+         * @hide
+         */
+        public static final String RECENTS_USE_OMNISWITCH = "recents_use_omniswitch";				
 
         /**
          * Whether or not volume button music controls should be enabled to seek media tracks
