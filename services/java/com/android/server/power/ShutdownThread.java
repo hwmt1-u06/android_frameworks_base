@@ -137,9 +137,8 @@ public final class ShutdownThread extends Thread {
             if (mReboot && !mRebootSafeMode){
                 sConfirmDialog = new AlertDialog.Builder(context)
                         .setTitle(com.android.internal.R.string.reboot_system)
-                            .setItems(
-                                    com.android.internal.R.array.shutdown_reboot_options,
-                                    new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(com.android.internal.R.array.shutdown_reboot_options,
+                                0, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which < 0)
                                     return;
@@ -149,12 +148,23 @@ public final class ShutdownThread extends Thread {
 
                                 if (actions != null && which < actions.length)
                                     mRebootReason = actions[which];
-
+                            }
+                        })
+                        .setPositiveButton(com.android.internal.R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
                                 mReboot = true;
   				   if (mRebootReason != null && mRebootReason.equals("soft")) {
                                         mRebootSoft = true;
                                     }
                                 beginShutdownSequence(context);
+                            }
+                        })
+                        .setNegativeButton(com.android.internal.R.string.no,
+                                new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mReboot = false;
+                                dialog.cancel();
                             }
                         })
                         .create();
