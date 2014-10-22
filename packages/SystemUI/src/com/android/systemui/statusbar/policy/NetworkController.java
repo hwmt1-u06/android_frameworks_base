@@ -252,6 +252,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
 
         // broadcasts
         IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED);
         filter.addAction("com.android.settings.LABEL_CHANGED");
         filter.addAction(WifiManager.RSSI_CHANGED_ACTION);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -468,7 +469,9 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
             updateConnectivity(intent);
             refreshViews();
         } else if (action.equals("com.android.settings.LABEL_CHANGED")) {
-            refreshViews(); 
+            refreshViews();
+        } else if (action.equals(Intent.ACTION_CUSTOM_CARRIER_LABEL_CHANGED)) {
+            refreshViews();
         } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
             refreshLocale();
             refreshViews();
@@ -1176,8 +1179,13 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         String carrierName = "";
         int N;
         final boolean emergencyOnly = isEmergencyOnly();
+
         final String customLabel = Settings.System.getString(mContext.getContentResolver(),
                 Settings.System.CUSTOM_CARRIER_LABEL);
+				
+        final String customCarrierLabel = Settings.System.getStringForUser
+                (mContext.getContentResolver(), Settings.System.NOTIFICATION_CUSTOM_CARRIER_LABEL,
+                UserHandle.USER_CURRENT);				
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
@@ -1346,6 +1354,11 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         // Cleanup the double quotes
         if (wifiLabel.length() > 0) {
             wifiLabel = wifiLabel.replaceAll("^\"|\"$", "");
+        }
+
+        if (!TextUtils.isEmpty(customCarrierLabel)) {
+            combinedLabel = customCarrierLabel;
+            mobileLabel = customCarrierLabel;
         }
 
         if (DEBUG) {
