@@ -3177,6 +3177,12 @@ public final class Settings {
          */
         public static final String POINTER_SPEED = "pointer_speed";
 
+        /**		
+        * Adjust the vibration multiplier to control vibration strength
+        * @hide
+        */
+       public static final String VIBRATION_MULTIPLIER = "vibration_multiplier";		
+
        /**
 	* Use the Notification Power Widget? (Who wouldn't!)
 	*
