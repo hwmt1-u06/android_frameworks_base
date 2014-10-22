@@ -113,7 +113,6 @@ import android.widget.Toast;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
-import com.android.internal.util.omni.OmniSwitchConstants;
 import com.android.systemui.statusbar.phone.Ticker;
 import com.android.internal.widget.SizeAdaptiveLayout;
 import com.android.internal.util.beanstalk.DeviceUtils;
@@ -144,8 +143,6 @@ import com.android.systemui.statusbar.view.PieStatusPanel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
 
 public abstract class BaseStatusBar extends SystemUI implements
         CommandQueue.Callbacks {
@@ -331,7 +328,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected AppCircleSidebar mAppCircleSidebar;
 
     protected ActiveDisplayView mActiveDisplayView;
-    protected int mExpandedDesktopStyle = 0;
 
     public IStatusBarService getStatusBarService() {
         return mBarService;
@@ -816,8 +812,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
                 final String packageNameF = sbn.getPackageName();
                 final PendingIntent contentIntent = sbn.getNotification().contentIntent;
-                boolean expanded = Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.EXPANDED_DESKTOP_STATE, 0) == 1;
 
                 if (packageNameF == null) return false;
                 if (v.getWindowToken() == null) return false;
@@ -1100,32 +1094,18 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     };
 
-    private boolean isOmniSwitchEnabled() {
-        int settingsValue = Settings.System.getIntForUser(
-                mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0
-                , UserHandle.USER_CURRENT);
-        return (settingsValue == 1);
-    }
-
     protected void toggleRecentsActivity() {
-        if (isOmniSwitchEnabled()){
-            Intent showIntent = new Intent(OmniSwitchConstants.ACTION_TOGGLE_OVERLAY);
-            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-        } else {
         if (mRecents != null || cRecents != null) {
         mCustomRecent = Settings.System.getBoolean(mContext.getContentResolver(), 
                         Settings.System.CUSTOM_RECENT, false);
 	if(mCustomRecent)
             cRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
         else
-                mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
-                    mExpandedDesktopStyle);
-            }
+            mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
         }
     }
 
     protected void preloadRecentTasksList() {
-        if (!isOmniSwitchEnabled()) {
         if (mRecents != null || cRecents != null) {
         mCustomRecent = Settings.System.getBoolean(mContext.getContentResolver(), 
                         Settings.System.CUSTOM_RECENT, false);
@@ -1133,12 +1113,10 @@ public abstract class BaseStatusBar extends SystemUI implements
             cRecents.preloadRecentTasksList();
         else
             mRecents.preloadRecentTasksList();
-            }
         }
     }
 
     protected void cancelPreloadingRecentTasksList() {
-        if (!isOmniSwitchEnabled()) {
         if (mRecents != null || cRecents != null) {
         mCustomRecent = Settings.System.getBoolean(mContext.getContentResolver(), 
                         Settings.System.CUSTOM_RECENT, false);
@@ -1146,15 +1124,10 @@ public abstract class BaseStatusBar extends SystemUI implements
             cRecents.cancelPreloadingRecentTasksList();
         else
             mRecents.cancelPreloadingRecentTasksList();
-            }
         }
     }
 
     protected void closeRecents() {
-        if (isOmniSwitchEnabled()){
-            Intent hideIntent = new Intent(OmniSwitchConstants.ACTION_HIDE_OVERLAY);
-            mContext.sendBroadcastAsUser(hideIntent, UserHandle.CURRENT);
-        } else {
         if (mRecents != null || cRecents != null) {
         mCustomRecent = Settings.System.getBoolean(mContext.getContentResolver(), 
                         Settings.System.CUSTOM_RECENT, false);
