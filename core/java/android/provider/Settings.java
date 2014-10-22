@@ -5269,6 +5269,15 @@ public final class Settings {
          * @hide
          */
         public static final String SCREEN_RECORDER_RECORD_AUDIO = "screen_recorder_record_audio";
+        
+        /**
+         * Call recording format value
+         * 0: AMR_WB
+         * 1: MPEG_4
+         * Default: 0
+         * @hide
+         */
+        public static final String CALL_RECORDING_FORMAT = "call_recording_format";        
 
        /**
          * Whether to enable swiping your finger across the statusbar to change the brightness.
