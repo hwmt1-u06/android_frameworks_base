@@ -27,8 +27,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.os.UserHandle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -69,7 +69,8 @@ public class StatusBarIconView extends AnimatedImageView {
         mNumberPain.setTextSize(scaledPx);
         mNotification = notification;
         mShowNotificationCount = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_NOTIFICATION_COUNT, 0) == 1;
+                Settings.System.STATUS_BAR_NOTIF_COUNT, mContext.getResources().getBoolean(
+                        R.bool.config_statusBarShowNumber) ? 1 : 0) == 1;
         setContentDescription(notification);
 
         SettingsObserver observer = new SettingsObserver(new Handler());
@@ -318,7 +319,7 @@ public class StatusBarIconView extends AnimatedImageView {
         }
         void observe() {
             mContext.getContentResolver().registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUS_BAR_NOTIFICATION_COUNT),
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_NOTIF_COUNT),
                     false, this);
         }
         void unobserve() {
@@ -328,7 +329,8 @@ public class StatusBarIconView extends AnimatedImageView {
         public void onChange(boolean selfChange) {
             mShowNotificationCount = Settings.System.getInt(
                     mContext.getContentResolver(),
-                    Settings.System.STATUS_BAR_NOTIFICATION_COUNT, 0) == 1;
+                    Settings.System.STATUS_BAR_NOTIF_COUNT, mContext.getResources().getBoolean(
+                        R.bool.config_statusBarShowNumber) ? 1 : 0) == 1;
             set(mIcon, true);
         }
     }
