@@ -8,6 +8,7 @@ public class ButtonsConstants {
     public static final String ACTION_HOME                 = "**home**";
     public static final String ACTION_BACK                 = "**back**";
     public static final String ACTION_SEARCH               = "**search**";
+    public static final String ACTION_VOICE_SEARCH         = "**voice_search**";
     public static final String ACTION_MENU                 = "**menu**";
     public static final String ACTION_MENU_BIG             = "**menu_big**";
     public static final String ACTION_POWER                = "**power**";
@@ -25,6 +26,7 @@ public class ButtonsConstants {
     public static final String ACTION_POWER_MENU           = "**power_menu**";
     public static final String ACTION_TORCH                = "**torch**";
     public static final String ACTION_EXPANDED_DESKTOP     = "**expanded_desktop**";
+    public static final String ACTION_THEME_SWITCH         = "**theme_switch**";
     public static final String ACTION_KEYGUARD_SEARCH      = "**keyguard_search**";
     public static final String ACTION_PIE                  = "**pie**";
     public static final String ACTION_NAVBAR               = "**nav_bar**";
@@ -33,6 +35,8 @@ public class ButtonsConstants {
     public static final String ACTION_IME_NAVIGATION_RIGHT = "**ime_nav_right**";
     public static final String ACTION_IME_NAVIGATION_UP    = "**ime_nav_up**";
     public static final String ACTION_IME_NAVIGATION_DOWN  = "**ime_nav_down**";
+    public static final String ACTION_IME_NAVIGATION_HOME  = "**ime_nav_home**";
+    public static final String ACTION_IME_NAVIGATION_END   = "**ime_nav_end**";
     public static final String ACTION_CAMERA               = "**camera**";
     public static final String ACTION_MEDIA_PREVIOUS       = "**media_previous**";
     public static final String ACTION_MEDIA_NEXT           = "**media_next**";
