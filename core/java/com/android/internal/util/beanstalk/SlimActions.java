@@ -19,15 +19,16 @@ package com.android.internal.util.beanstalk;
 import android.app.Activity;
 import android.app.ActivityManagerNative;
 import android.app.SearchManager;
+import android.app.IUiModeManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.IAudioService;
 import android.media.ToneGenerator;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.RemoteException;
@@ -58,9 +59,9 @@ public class SlimActions {
         processActionWithOptions(context, action, isLongpress, true);
     }
 
-    public static void processActionWithOptions(
-                Context context, String action, boolean isLongpress,
-                boolean collapseShade) {
+    public static void processActionWithOptions(Context context,
+            String action, boolean isLongpress, boolean collapseShade) {
+
             if (action == null || action.equals(ButtonsConstants.ACTION_NULL)) {
                 return;
             }
@@ -84,42 +85,49 @@ public class SlimActions {
             }
 
             if (collapseShade) {
-                    if (!action.equals(ButtonsConstants.ACTION_QS)
-                            && !action.equals(ButtonsConstants.ACTION_NOTIFICATIONS)
-                            && !action.equals(ButtonsConstants.ACTION_SMART_PULLDOWN)
-                            && !action.equals(ButtonsConstants.ACTION_TORCH)) {
-                        try {
-                            barService.collapsePanels();
-                        } catch (RemoteException ex) {
-                        }
+                if (!action.equals(ButtonsConstants.ACTION_QS)
+                        && !action.equals(ButtonsConstants.ACTION_NOTIFICATIONS)
+                        && !action.equals(ButtonsConstants.ACTION_SMART_PULLDOWN)
+                        && !action.equals(ButtonsConstants.ACTION_THEME_SWITCH)
+                        && !action.equals(ButtonsConstants.ACTION_TORCH)) {
+                    try {
+                        barService.collapsePanels();
+                    } catch (RemoteException ex) {
                     }
+                }
             }
 
             // process the actions
             if (action.equals(ButtonsConstants.ACTION_HOME)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_HOME, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_HOME, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_BACK)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_BACK, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_BACK, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_SEARCH)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_SEARCH, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_SEARCH, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_MENU)
                     || action.equals(ButtonsConstants.ACTION_MENU_BIG)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_MENU, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_MENU, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_LEFT)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_DPAD_LEFT, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_DPAD_LEFT, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_RIGHT)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_DPAD_RIGHT, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_DPAD_RIGHT, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_UP)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_DPAD_UP, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_DPAD_UP, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_DOWN)) {
-                injectKeyDelayed(KeyEvent.KEYCODE_DPAD_DOWN, isLongpress, false);
+                triggerVirtualKeypress(KeyEvent.KEYCODE_DPAD_DOWN, isLongpress);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_HOME)) {
+                triggerVirtualKeypress(KeyEvent.KEYCODE_MOVE_HOME, isLongpress);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_END)) {
+                triggerVirtualKeypress(KeyEvent.KEYCODE_MOVE_END, isLongpress);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_POWER_MENU)) {
                 try {
@@ -179,6 +187,36 @@ public class SlimActions {
                         context.getContentResolver(),
                         Settings.System.EXPANDED_DESKTOP_STATE,
                         expandDesktopModeOn ? 0 : 1, UserHandle.USER_CURRENT);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_THEME_SWITCH)) {
+                boolean autoLightMode = Settings.Secure.getIntForUser(
+                        context.getContentResolver(),
+                        Settings.Secure.UI_THEME_AUTO_MODE, 0,
+                        UserHandle.USER_CURRENT) == 1;
+                boolean state = context.getResources().getConfiguration().uiThemeMode
+                        == Configuration.UI_THEME_MODE_HOLO_DARK;
+                if (autoLightMode) {
+                    try {
+                        barService.collapsePanels();
+                    } catch (RemoteException ex) {
+                    }
+                    Toast.makeText(context,
+                            com.android.internal.R.string.theme_auto_switch_mode_error,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // Handle a switch change
+                // we currently switch between holodark and hololight till either
+                // theme engine is ready or lightheme is ready. Currently due of
+                // missing light themeing hololight = system base theme
+                final IUiModeManager uiModeManagerService = IUiModeManager.Stub.asInterface(
+                        ServiceManager.getService(Context.UI_MODE_SERVICE));
+                try {
+                    uiModeManagerService.setUiThemeMode(state
+                            ? Configuration.UI_THEME_MODE_HOLO_LIGHT
+                            : Configuration.UI_THEME_MODE_HOLO_DARK);
+                } catch (RemoteException e) {
+                }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_KILL)) {
                 if (isKeyguardShowing) {
@@ -254,6 +292,23 @@ public class SlimActions {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
                 }
                 startActivity(context, windowManagerService, isKeyguardShowing, intent);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_VOICE_SEARCH)) {
+                // launch the search activity
+                Intent intent = new Intent(Intent.ACTION_SEARCH_LONG_PRESS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    // TODO: This only stops the factory-installed search manager.
+                    // Need to formalize an API to handle others
+                    SearchManager searchManager =
+                            (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+                    if (searchManager != null) {
+                        searchManager.stopSearch();
+                    }
+                startActivity(context, windowManagerService, isKeyguardShowing, intent);
+                } catch (ActivityNotFoundException e) {
+                    Log.e("LiquidActions:", "No activity to handle assist long press action.", e);
+                }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_VIB)) {
                 AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -372,6 +427,7 @@ public class SlimActions {
                 || action.equals(ButtonsConstants.ACTION_BACK)
                 || action.equals(ButtonsConstants.ACTION_SEARCH)
                 || action.equals(ButtonsConstants.ACTION_MENU)
+                || action.equals(ButtonsConstants.ACTION_MENU_BIG)
                 || action.equals(ButtonsConstants.ACTION_NULL)) {
             return true;
         }
@@ -452,32 +508,17 @@ public class SlimActions {
         }
     }
 
-    private static class H extends Handler {
-        public void handleMessage(Message m) {
-            final InputManager inputManager = InputManager.getInstance();
-            switch (m.what) {
-                case MSG_INJECT_KEY_DOWN:
-                    inputManager.injectInputEvent((KeyEvent) m.obj,
-                            InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-                    break;
-                case MSG_INJECT_KEY_UP:
-                    inputManager.injectInputEvent((KeyEvent) m.obj,
-                            InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-                    break;
-            }
-        }
-    }
-    private static H mHandler = new H();
-
-    private static void injectKeyDelayed(int keyCode,
-            boolean longpress, boolean sendOnlyDownMessage) {
-        long when = SystemClock.uptimeMillis();
+    public static void triggerVirtualKeypress(final int keyCode, boolean longpress) {
+        InputManager im = InputManager.getInstance();
+        long now = SystemClock.uptimeMillis();
         int downflags = 0;
         int upflags = 0;
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
             || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
             || keyCode == KeyEvent.KEYCODE_DPAD_UP
-            || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            || keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+            || keyCode == KeyEvent.KEYCODE_MOVE_HOME
+            || keyCode == KeyEvent.KEYCODE_MOVE_END) {
             downflags = upflags = KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE;
         } else {
             downflags = upflags = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
@@ -485,20 +526,18 @@ public class SlimActions {
         if (longpress) {
             downflags |= KeyEvent.FLAG_LONG_PRESS;
         }
-        mHandler.removeMessages(MSG_INJECT_KEY_DOWN);
-        mHandler.removeMessages(MSG_INJECT_KEY_UP);
 
-        KeyEvent down = new KeyEvent(when, when + 10, KeyEvent.ACTION_DOWN, keyCode, 0, 0,
-                KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+        final KeyEvent downEvent = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
+                keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                 downflags,
                 InputDevice.SOURCE_KEYBOARD);
-        mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_INJECT_KEY_DOWN, down), 10);
+        im.injectInputEvent(downEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
 
-        KeyEvent up = new KeyEvent(when, when + 30, KeyEvent.ACTION_UP, keyCode, 0, 0,
-                KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+        final KeyEvent upEvent = new KeyEvent(now, now, KeyEvent.ACTION_UP,
+                keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                 upflags,
                 InputDevice.SOURCE_KEYBOARD);
-        mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_INJECT_KEY_UP, up), 30);
+        im.injectInputEvent(upEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
 
 }
