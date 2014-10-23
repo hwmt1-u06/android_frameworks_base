@@ -8309,15 +8309,11 @@ public final class Settings {
             MOUNT_UMS_PROMPT,
             MOUNT_UMS_NOTIFY_ENABLED,
             UI_NIGHT_MODE,
-<<<<<<< HEAD
-=======
             UI_THEME_MODE,
             UI_THEME_AUTO_MODE,
->>>>>>> 8ef854a... TRDS 3.0 & new theme engine preparation [1/5]
             ADVANCED_REBOOT,
             PRIVACY_GUARD_DEFAULT,
-	    DEVELOPMENT_SHORTCUT,
-	    UI_INVERTED_MODE
+	        DEVELOPMENT_SHORTCUT
         };
 
         /**

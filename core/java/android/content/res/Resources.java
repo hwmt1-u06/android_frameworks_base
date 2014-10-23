@@ -1743,9 +1743,6 @@ public class Resources {
          * Quick test to find out if the config change that occurred should
          * trigger a full cache wipe.
          */
-
-        if (Configuration.needNewResources(configChanges, 0)) {
-
         if (Configuration.needNewResources(configChanges, ActivityInfo.CONFIG_UI_THEME_MODE)) {
 
             if (DEBUG_CONFIG) {
@@ -1755,10 +1752,15 @@ public class Resources {
             cache.clear();
             return;
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> 8ef854a... TRDS 3.0 & new theme engine preparation [1/5]
+        if (Configuration.needNewResources(configChanges, 0)) {
+            if (DEBUG_CONFIG) {
+                Log.d(TAG, "Clear drawable cache from config changes: 0x"
+                        + Integer.toHexString(configChanges));
+            }
+            cache.clear();
+            return;
+        }
         int N = cache.size();
         if (DEBUG_CONFIG) {
             Log.d(TAG, "Cleaning up drawables config changes: 0x"
@@ -2174,12 +2176,6 @@ public class Resources {
             mAssets.recreateStringBlocks();
         }
     }
- 
-        synchronized (mTmpValue) {
-            mAssets.recreateStringBlocks();
-        }
-    }
-
 
     /*package*/ Drawable loadDrawable(TypedValue value, int id)
             throws NotFoundException {
