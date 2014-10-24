@@ -531,8 +531,6 @@ public class SignalStrength implements Parcelable {
             level = getLteLevel();
             if ((level == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && ((getGsmAsuLevel() != 99 && lteChecks)
                    || getTdScdmaLevel() != SIGNAL_STRENGTH_NONE_OR_UNKNOWN)) || oldRil) {
-            if ((level == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && getGsmAsuLevel() != 99 && lteChecks) || oldRil) {
-
                 level = getTdScdmaLevel();
                 if (level == SIGNAL_STRENGTH_NONE_OR_UNKNOWN) {
                     level = getGsmLevel();
@@ -599,7 +597,6 @@ public class SignalStrength implements Parcelable {
             boolean lteChecks = (getLteRsrp() == INVALID && getLteRsrq() == INVALID && getLteRssnr() == INVALID && getLteSignalStrength() == 99);
             if ((getLteLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && ( (getGsmAsuLevel() != 99 &&
                    lteChecks) || getTdScdmaAsuLevel() != 99 )) || oldRil) {
-            if ((getLteLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && getGsmAsuLevel() != 99 && lteChecks) || oldRil) {
                 if (getTdScdmaLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN) {
                     asuLevel = getGsmAsuLevel();
                 } else {
@@ -639,9 +636,6 @@ public class SignalStrength implements Parcelable {
             boolean lteChecks = (getLteRsrp() == INVALID && getLteRsrq() == INVALID && getLteRssnr() == INVALID && getLteSignalStrength() == 99);
             if ((getLteLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && ( (getGsmAsuLevel() != 99 && lteChecks)
                     || getTdScdmaAsuLevel() != 99 )) || oldRil) {
-           boolean oldRil = needsOldRilFeature("signalstrength");
-           boolean lteChecks = (getLteRsrp() == INVALID && getLteRsrq() == INVALID && getLteRssnr() == INVALID && getLteSignalStrength() == 99);
-           if ((getLteLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN && getGsmAsuLevel() != 99 && lteChecks) || oldRil) {
                 if (getTdScdmaLevel() == SIGNAL_STRENGTH_NONE_OR_UNKNOWN) {
                     dBm = getGsmDbm();
                 } else {
@@ -1206,7 +1200,6 @@ public class SignalStrength implements Parcelable {
         int tdScdmaAsuLevel;
 
         if (tdScdmaDbm == INVALID) tdScdmaAsuLevel = 99;
-        if (tdScdmaDbm == INVALID) tdScdmaAsuLevel = 255;
         else tdScdmaAsuLevel = tdScdmaDbm + 120;
         if (DBG) log("TD-SCDMA Asu level: " + tdScdmaAsuLevel);
         return tdScdmaAsuLevel;
