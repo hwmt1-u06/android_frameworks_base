@@ -719,7 +719,6 @@ public class TelephonyManager {
      * @see #NETWORK_TYPE_HSPAP
      * @see #NETWORK_TYPE_TD_SCDMA
      * @see #NETWORK_TYPE_DCHSPAP
-     * @see #NETWORK_TYPE_TD_SCDMA
      *
      * @hide
      */
@@ -810,7 +809,6 @@ public class TelephonyManager {
             case NETWORK_TYPE_HSPAP:
             case NETWORK_TYPE_TD_SCDMA:
             case NETWORK_TYPE_DCHSPAP:
-            case NETWORK_TYPE_TD_SCDMA:
                 return NETWORK_CLASS_3_G;
             case NETWORK_TYPE_LTE:
                 return NETWORK_CLASS_4_G;
@@ -869,8 +867,6 @@ public class TelephonyManager {
                 return "TD_SCDMA";
             case NETWORK_TYPE_DCHSPAP:
                 return "DC-HSPA+";
-            case NETWORK_TYPE_TD_SCDMA:
-                return "TD_SCDMA";
             default:
                 return "UNKNOWN";
         }
