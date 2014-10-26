@@ -55,6 +55,10 @@ public interface RILConstants {
     int ILLEGAL_SIM_OR_ME = 15;               /* network selection failure due
                                                  to wrong SIM/ME and no
                                                  retries needed */
+    int SUBSCRIPTION_NOT_SUPPORTED = 26;      /* Subscription not supported */
+    int MISSING_RESOURCE = 27;
+    int NO_SUCH_ELEMENT = 28;
+    int INVALID_PARAMETER = 29;
 
     /* NETWORK_MODE_* See ril.h RIL_REQUEST_SET_PREFERRED_NETWORK_TYPE */
     int NETWORK_MODE_WCDMA_PREF     = 0; /* GSM/WCDMA (WCDMA preferred) */
@@ -276,6 +280,15 @@ cat include/telephony/ril.h | \
     int RIL_REQUEST_SET_INITIAL_ATTACH_APN = 111;
     int RIL_REQUEST_IMS_REGISTRATION_STATE = 112;
     int RIL_REQUEST_IMS_SEND_SMS = 113;
+    int RIL_REQUEST_GET_DATA_CALL_PROFILE = 114;
+    int RIL_REQUEST_SET_UICC_SUBSCRIPTION = 115;
+    int RIL_REQUEST_SET_DATA_SUBSCRIPTION = 116;
+    int RIL_REQUEST_SIM_TRANSMIT_BASIC = 117;
+    int RIL_REQUEST_SIM_OPEN_CHANNEL = 118;
+    int RIL_REQUEST_SIM_CLOSE_CHANNEL = 119;
+    int RIL_REQUEST_SIM_TRANSMIT_CHANNEL = 120;
+    int RIL_REQUEST_SIM_GET_ATR = 121;
+
     int RIL_UNSOL_RESPONSE_BASE = 1000;
     int RIL_UNSOL_RESPONSE_RADIO_STATE_CHANGED = 1000;
     int RIL_UNSOL_RESPONSE_CALL_STATE_CHANGED = 1001;
