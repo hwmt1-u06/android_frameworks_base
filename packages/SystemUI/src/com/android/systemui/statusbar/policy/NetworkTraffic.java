@@ -58,6 +58,9 @@ public class NetworkTraffic extends TextView {
     private int GB = MB * KB;
     private boolean mAutoHide;
     private int mAutoHideThreshold;
+    private String mUp = "↑";
+    private String mDown = "↓";
+
 
     private Handler mTrafficHandler = new Handler() {
         @Override
@@ -96,11 +99,12 @@ public class NetworkTraffic extends TextView {
                     txData = txData * 8;
                 }
 
-                // Get information for uplink ready so the line return can be added
-                String output = "";
-                if (isSet(mState, MASK_UP)) {
-                    output = formatOutput(timeDelta, txData, symbol);
-                }
+            // Get information for uplink ready so the line return can be added
+            String output = "";
+            if (isSet(mState, MASK_UP)) {
+                output = formatOutput(timeDelta, txData, symbol);
+                output += mUp;
+            }
 
                 // Ensure text size is where it needs to be
                 int textSize;
@@ -111,10 +115,11 @@ public class NetworkTraffic extends TextView {
                     textSize = txtSizeSingle;
                 }
 
-                // Add information for downlink if it's called for
-                if (isSet(mState, MASK_DOWN)) {
-                    output += formatOutput(timeDelta, rxData, symbol);
-                }
+            // Add information for downlink if it's called for
+            if (isSet(mState, MASK_DOWN)) {
+                output += formatOutput(timeDelta, rxData, symbol);
+                output += mDown;
+            }
 
                 // Update view if there's anything new to show
                 if (! output.contentEquals(getText())) {
@@ -301,7 +306,6 @@ public class NetworkTraffic extends TextView {
                     mTrafficHandler.sendEmptyMessage(1);
                 }
                 setVisibility(View.VISIBLE);
-                updateTrafficDrawable();
                 return;
             }
         } else {
@@ -323,19 +327,5 @@ public class NetworkTraffic extends TextView {
         mTrafficHandler.removeCallbacks(mRunnable);
         mTrafficHandler.removeMessages(0);
         mTrafficHandler.removeMessages(1);
-    }
-
-    private void updateTrafficDrawable() {
-        int intTrafficDrawable;
-        if (isSet(mState, MASK_UP + MASK_DOWN)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_updown;
-        } else if (isSet(mState, MASK_UP)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
-        } else if (isSet(mState, MASK_DOWN)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
-        } else {
-            intTrafficDrawable = 0;
-        }
-        setCompoundDrawablesWithIntrinsicBounds(0, 0, intTrafficDrawable, 0);
     }
 }
