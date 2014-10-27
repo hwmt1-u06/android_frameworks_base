@@ -239,7 +239,11 @@ public class BatteryCircleMeterView extends ImageView {
           if (mIsCharging) {
             usePaint.setColor(mCircleTextChargingColor);
           } else {
-            usePaint.setColor(mCircleColor);
+                if (mCustomColor) {
+                        usePaint.setColor(systemColor);
+                } else {
+            		usePaint.setColor(mCircleColor);
+                }
           }
         }
 
