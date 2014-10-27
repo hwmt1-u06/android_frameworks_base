@@ -617,7 +617,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-<<<<<<< HEAD
                     Settings.System.QS_QUICK_ACCESS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -632,13 +631,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER), false, this,
                     UserHandle.USER_ALL);					
-            update();
-=======
-                    Settings.System.STATUS_BAR_CARRIER), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
+			resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.TICKER_DISABLED), false, this);
-            updateSettings();
->>>>>>> 7a62add... Disable ticker preference [1/2]
+            update();
         }
 
         @Override
