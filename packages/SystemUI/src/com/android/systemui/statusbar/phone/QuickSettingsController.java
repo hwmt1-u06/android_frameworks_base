@@ -272,6 +272,9 @@ public class QuickSettingsController {
             } else if (tile.equals(TILE_PROFILE)) {
                 mTileStatusUris.add(Settings.System.getUriFor(
                 Settings.System.SYSTEM_PROFILES_ENABLED));
+                if (QSUtils.systemProfilesEnabled(resolver)) {
+                qs = new ProfileTile(mContext, this);
+                }
             } else if (tile.equals(TILE_LTE)) {
                 qs = new LteTile(mContext, this);
             } else if (tile.equals(TILE_QUIETHOURS)) {
