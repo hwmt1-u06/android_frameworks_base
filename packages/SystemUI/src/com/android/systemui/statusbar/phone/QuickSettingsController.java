@@ -59,6 +59,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_WIFIAP;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REBOOT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_INTERNALMEMORY;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_CPUFREQ;
+import static com.android.internal.util.beanstalk.QSConstants.TILE_PROFILE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REMOTEDISPLAY;
@@ -127,6 +128,7 @@ import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
 import com.android.systemui.quicksettings.CPUFreqTile;
+import com.android.systemui.quicksettings.ProfileTile;
 
 
 
@@ -267,6 +269,9 @@ public class QuickSettingsController {
                 qs = new SleepScreenTile(mContext, this);
             } else if (tile.equals(TILE_NFC)) {
                 qs = new NfcTile(mContext, this);
+            } else if (tile.equals(TILE_PROFILE)) {
+                mTileStatusUris.add(Settings.System.getUriFor(
+                Settings.System.SYSTEM_PROFILES_ENABLED));
             } else if (tile.equals(TILE_LTE)) {
                 qs = new LteTile(mContext, this);
             } else if (tile.equals(TILE_QUIETHOURS)) {
