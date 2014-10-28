@@ -84,6 +84,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 
+import com.android.internal.util.cm.QSUtils;
 import com.android.internal.util.beanstalk.DeviceUtils;
 import com.android.systemui.quicksettings.AirplaneModeTile;
 import com.android.systemui.quicksettings.AlarmTile;
