@@ -130,6 +130,7 @@
     <string name="quick_settings_music_schedule_update">Update timer</string>
     <string name="quick_settings_reboot_recovery">Recovery</string>
     <string name="quick_settings_reboot">Reboot</string>
+    <string name="quick_settings_profile_label">Profile</string> 
 
     <string name="accessibility_data_connection_HP">HSPA+</string>
 
