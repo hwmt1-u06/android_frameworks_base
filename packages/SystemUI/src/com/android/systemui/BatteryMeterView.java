@@ -456,7 +456,7 @@ public class BatteryMeterView extends View implements DemoMode {
             }
             mTextHeight = -mTextPaint.getFontMetrics().ascent;
 			
-                mTextPaint.setColor(doOverride ? mOverrideIconColor : 0xFF000000);			
+                mTextPaint.setColor(0xFF000000);		
 
             String str;
             if (mPercentageOnly) {
