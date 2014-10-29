@@ -307,13 +307,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 UserHandle.USER_CURRENT) > 0;
 
         mObserver = new SettingsObserver(new Handler());
-    }
-
-        final String keyguardPackage = mContext.getString(
-                com.android.internal.R.string.config_keyguardPackage);
-        final Bundle keyguardMetadata = getApplicationMetadata(mContext, keyguardPackage);
-        mHasCmKeyguard = keyguardMetadata != null &&
-                keyguardMetadata.getBoolean("com.cyanogenmod.keyguard", false);
 
         mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
         BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
@@ -332,12 +325,11 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private AnimatorSet generateButtonColorsAnimatorSet() {
         final ImageView[] buttons = new ImageView[] {
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_RECENT)),
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_BACK)),
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_HOME)),
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_CONDITIONAL_MENU)),
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_ALWAYS_MENU)),
-            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_MENU_BIG)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(ButtonsConstants.ACTION_RECENTS)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(ButtonsConstants.ACTION_BACK)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(ButtonsConstants.ACTION_HOME)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(ButtonsConstants.ACTION_MENU)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(ButtonsConstants.ACTION_MENU_BIG)),
             (ImageView) getSearchLight(),
             (ImageView) getCameraButton(),
             (ImageView) getNotifsButton()
