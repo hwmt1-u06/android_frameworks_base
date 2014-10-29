@@ -61,14 +61,22 @@ public class BarTransitions {
 
     private int mMode;
 
-
     public BarTransitions(View view, BarBackgroundDrawable barBackground) {
         mTag = "BarTransitions." + view.getClass().getSimpleName();
         mView = view;
-        mBarBackground = new BarBackgroundDrawable(mView.getContext(), gradientResourceId);
+        mBarBackground = barBackground;
         if (HIGH_END) {
             mView.setBackground(mBarBackground);
         }
+    }
+
+    protected void setGradientResourceId(int gradientResourceId) {
+        mBarBackground.setGradientResourceId(mView.getContext().getResources(),
+                gradientResourceId);
+    }
+
+    public void updateResources(Resources res) {
+        mBarBackground.updateResources(res);
     }
 
     public int getMode() {
@@ -142,12 +150,15 @@ public class BarTransitions {
         private int mSemiTransparent = 0;
         private Drawable mGradient = null;
 
-
         private int mCurrentMode = -1;
         private int mCurrentColor = 0;
         private Animator mColorAnimator = null;
         private int mCurrentGradientAlpha = 0;
         private Animator mGradientAlphaAnimator = null;
+
+        public BarBackgroundDrawable(final Context context, final int opaqueColorResId,
+                final int semiTransparentColorResId, final int gradientResId) {
+            mHandler = new Handler();
 
             mOpaqueColorResId = opaqueColorResId;
             mSemiTransparentColorResId = semiTransparentColorResId;

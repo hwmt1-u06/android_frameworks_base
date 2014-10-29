@@ -375,7 +375,6 @@ public class SignalClusterView extends LinearLayout
             updateSettings();
             apply();
         }
-<<<<<<< HEAD
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -384,8 +383,4 @@ public class SignalClusterView extends LinearLayout
         }
     };
 }
-=======
-    }
->>>>>>> 029ecfc... Frameworks: Implement Dynamic System Bars (1/2)
 
-}

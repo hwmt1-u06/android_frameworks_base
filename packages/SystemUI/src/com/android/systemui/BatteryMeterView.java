@@ -74,7 +74,6 @@ public class BatteryMeterView extends View implements DemoMode {
 
     public static final float SUBPIXEL = 0.4f;  // inset rects for softer edges
 
-<<<<<<< HEAD
     int[] mColors;
 
     boolean mShowIcon = true;
@@ -183,6 +182,7 @@ public class BatteryMeterView extends View implements DemoMode {
     private boolean mQS = false;
     private int mOverrideIconColor = 0;
 
+    private final int mChargeColor;
 
     @Override
     public void onAttachedToWindow() {
@@ -196,7 +196,8 @@ public class BatteryMeterView extends View implements DemoMode {
             // preload the battery level
             mTracker.onReceive(getContext(), sticky);
         }
-    }
+
+     }
 
     @Override
     public void onDetachedFromWindow() {
@@ -239,6 +240,8 @@ public class BatteryMeterView extends View implements DemoMode {
         colors.recycle();
         batteryType.recycle();
 
+        mChargeColor = getResources().getColor(R.color.batterymeter_charge_color);
+
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
 
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -266,8 +269,9 @@ public class BatteryMeterView extends View implements DemoMode {
         mBoltPaint.setAntiAlias(true);
         mBoltPoints = loadBoltPoints(res);
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
+        updateSettings(mIsQuickSettings);
+	
+	    mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
         BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
 
             @Override
@@ -295,8 +299,6 @@ public class BatteryMeterView extends View implements DemoMode {
         return colorFader;
     }
 
-        updateSettings(mIsQuickSettings);
-    }
 
     private static float[] loadBoltPoints(Resources res) {
         final int[] pts = res.getIntArray(R.array.batterymeter_bolt_points);
