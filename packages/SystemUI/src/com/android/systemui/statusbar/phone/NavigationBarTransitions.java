@@ -51,7 +51,7 @@ public final class NavigationBarTransitions extends BarTransitions {
     private boolean mStickyTransparent;
 
     public NavigationBarTransitions(NavigationBarView view) {
-        super(view, new NavigationBarBackgroundDrawable(view.getContext()));      
+        super(view, new NavigationBarBackgroundDrawable(view.getContext()));
         mView = view;
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
