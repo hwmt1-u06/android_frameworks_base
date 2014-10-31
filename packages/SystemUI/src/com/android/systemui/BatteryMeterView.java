@@ -93,6 +93,7 @@ public class BatteryMeterView extends View implements DemoMode {
     private final RectF mButtonFrame = new RectF();
     private final RectF mClipFrame = new RectF();
     private final RectF mBoltFrame = new RectF();
+    private final int mDSBDuration;
 
     private int mBatteryStyle;
     private int mBatteryColor;
@@ -102,8 +103,6 @@ public class BatteryMeterView extends View implements DemoMode {
     private String mBatteryTypeView;
 
     private class BatteryTracker extends BroadcastReceiver {
-
-    private final int mDSBDuration;
 
         public static final int UNKNOWN_LEVEL = -1;
 
