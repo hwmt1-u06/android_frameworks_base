@@ -302,7 +302,7 @@
     <!-- USB OTG notification message -->
     <string name="usb_storage_notification_manage_message">Tap to manage</string>
     
-    + <!-- TRDS -->
+    <!-- TRDS -->
     <string name="quick_settings_theme_switch_dark">Dark theme</string>
     <string name="quick_settings_theme_switch_light">Light theme</string>  
          
