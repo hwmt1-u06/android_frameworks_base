@@ -63,7 +63,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_PROFILE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REMOTEDISPLAY;
-import static com.android.internal.util.beanstalk.QSConstants.TILE_THEME:  
+import static com.android.internal.util.beanstalk.QSConstants.TILE_THEME;  
 
 import android.app.Activity;
 import android.app.ActivityManagerNative;
