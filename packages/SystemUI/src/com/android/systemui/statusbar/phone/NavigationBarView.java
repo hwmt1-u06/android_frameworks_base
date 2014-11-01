@@ -324,6 +324,16 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             }
 
         });
+		
+        mDoubleTapGesture = new GestureDetector(mContext,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                if (pm != null) pm.goToSleep(e.getEventTime());
+                return true;
+            }
+        });		
     }
 
     private AnimatorSet generateButtonColorsAnimatorSet() {
@@ -366,18 +376,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             animSet.playTogether(anims);
             return animSet;
         }
-
-        mDoubleTapGesture = new GestureDetector(mContext,
-                new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-                if (pm != null) pm.goToSleep(e.getEventTime());
-                return true;
-            }
-        });
-
-    }
+     } 
 
     private void watchForDevicePolicyChanges() {
         final IntentFilter filter = new IntentFilter();
