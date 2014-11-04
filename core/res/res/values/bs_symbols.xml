@@ -172,8 +172,5 @@
   <java-symbol type="integer" name="config_uiThemeMode" />
   <java-symbol type="string" name="theme_auto_switch_mode_error" />
   <java-symbol type="drawable" name="dialog_full_holo_dark" />
-  <java-symbol type="string" name="theme_auto_switch_mode_error" />
-  
-    <!-- Hardware keys on/off option -->
-  <java-symbol type="bool" name="config_hwKeysPref" />    
+  <java-symbol type="string" name="theme_auto_switch_mode_error" />    
 </resources>
