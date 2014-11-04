@@ -283,7 +283,6 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
-<<<<<<< HEAD
     public void setPieTriggerMask(int newMask, boolean lock) {
         synchronized (mList) {
             mHandler.removeMessages(MSG_SET_PIE_TRIGGER_MASK);
