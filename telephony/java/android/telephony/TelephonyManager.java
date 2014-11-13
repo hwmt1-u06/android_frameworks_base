@@ -867,6 +867,8 @@ public class TelephonyManager {
                 return "GSM";
             case NETWORK_TYPE_TD_SCDMA:
                 return "TD-SCDMA";
+            case NETWORK_TYPE_DCHSPAP:
+                return "DC-HSPA+";    
             case NETWORK_TYPE_IWLAN:
                 return "IWLAN";
             default:
