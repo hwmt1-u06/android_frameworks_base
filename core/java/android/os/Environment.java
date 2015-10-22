@@ -46,7 +46,7 @@ public class Environment {
     /** {@hide} */
     public static final String DIR_ANDROID = "Android";
     private static final String DIR_DATA = "data";
-    private static final String DIR_MEDIA = "media";
+    private static final String DIR_MEDIA = "share";
     private static final String DIR_OBB = "obb";
     private static final String DIR_FILES = "files";
     private static final String DIR_CACHE = "cache";
@@ -56,7 +56,7 @@ public class Environment {
     public static final String DIRECTORY_ANDROID = DIR_ANDROID;
 
     private static final File DIR_ANDROID_ROOT = getDirectory(ENV_ANDROID_ROOT, "/system");
-    private static final File DIR_MEDIA_STORAGE = getDirectory(ENV_MEDIA_STORAGE, "/data/media");
+    private static final File DIR_MEDIA_STORAGE = getDirectory(ENV_MEDIA_STORAGE, "/data/share");
 
     private static final String CANONCIAL_EMULATED_STORAGE_TARGET = getCanonicalPathOrNull(
             ENV_EMULATED_STORAGE_TARGET);
@@ -126,7 +126,7 @@ public class Environment {
 
             String rawMediaStorage = System.getenv(ENV_MEDIA_STORAGE);
             if (TextUtils.isEmpty(rawMediaStorage)) {
-                rawMediaStorage = "/data/media";
+                rawMediaStorage = "/data/share";
             }
 
             ArrayList<File> externalForVold = Lists.newArrayList();
@@ -143,7 +143,7 @@ public class Environment {
                 // /storage/emulated/0
                 externalForVold.add(buildPath(emulatedSourceBase, rawUserId));
                 externalForApp.add(buildPath(emulatedTargetBase, rawUserId));
-                // /data/media/0
+                // /data/share/0
                 mEmulatedDirForDirect = buildPath(mediaBase, rawUserId);
 
             } else {
